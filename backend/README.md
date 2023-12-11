@@ -1,23 +1,42 @@
-1:
+#Setting Up and Running the Flask Application
 
-Make sure you have the google-credentials.json file and your .env file is filled in correctly.
-(ask Leon for the googl credentials)
-The .env and google-credentials.json both have to be in ./backend
+Follow these steps to set up and run your Flask application:
 
-2:
+#Prerequisites
 
-Make sure you are in the ./backend directory
+    Ensure you have Python installed on your system.
+    You need the google-credentials.json file for Google Cloud authentication. Contact Leon to obtain this file.
 
-python -m venv ./venv
+#onfiguration Files
 
-3:
+    Place the google-credentials.json file and the .env file in the ./backend directory.
+        The .env file should be properly filled with the required environment variables.
+        The google-credentials.json is needed for Google Cloud services authentication.
 
-.\venv\Scripts\activate
+#Setting Up the Environment
 
-4:
+    ##Open a terminal or command prompt and navigate to the ./backend directory:
 
-pip -r install requirements.txt
+    cd ./backend
 
-5:
+    ##Create a Python virtual environment in the current directory:
 
-flask --app . run --reload
+    python -m venv ./venv
+
+    ##Activate the virtual environment:
+
+        ##On Windows:
+            .\venv\Scripts\activate
+
+        ##On Unix or MacOS:
+            source ./venv/bin/activate
+
+    ##Install the required Python packages from requirements.txt:
+        pip install -r requirements.txt
+
+#Running the Flask Application
+
+    ##Run the Flask application with the following command:
+        flask --app . run --reload
+
+    The --reload flag enables the debugger and auto-reloads the server on code changes.
