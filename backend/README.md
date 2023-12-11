@@ -40,3 +40,19 @@ Follow these steps to set up and run your Flask application:
         flask --app . run --reload
 
     The --reload flag enables the debugger and auto-reloads the server on code changes.
+
+    To run the Flask application in a container:
+    Build an image:
+        docker image build . --tag={name}:latest
+
+        docker run -p 5000:5000 
+
+# Deploying to Google Cloud
+
+    Build the image
+
+    from ./backend run:
+        docker image build . --tag={name}:latest
+
+    run:
+        gcloud builds submit --tag gcr.io/saveplate-backend/{name}:latest

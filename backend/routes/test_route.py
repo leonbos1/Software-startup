@@ -30,7 +30,9 @@ def get():
     users_ref = db.collection("users")
     docs = users_ref.stream()
 
-    for doc in docs:
-        print(f'{doc.id} => {doc.to_dict()}')
+    data = []
 
-    return jsonify({'message': 'Data retrieved!'})
+    for doc in docs:
+        data.append(doc.to_dict())
+
+    return jsonify({'data': data})
