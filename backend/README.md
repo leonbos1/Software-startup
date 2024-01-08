@@ -45,7 +45,7 @@ Follow these steps to set up and run your Flask application:
     Build an image:
         docker image build . --tag={name}:latest
 
-        docker run -p 5000:5000 
+        docker container run {name}
 
 # Deploying to Google Cloud
 
