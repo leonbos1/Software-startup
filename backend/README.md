@@ -41,7 +41,7 @@ Follow these steps to set up and run your Flask application:
 
     The --reload flag enables the debugger and auto-reloads the server on code changes.
 
-    To run the Flask application in a container:
+# Running backend in Docker
     Build an image:
         docker image build . --tag={name}:latest
 
