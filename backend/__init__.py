@@ -1,12 +1,13 @@
 from flask import Flask
 from flask_cors import CORS
 
-from .routes.test_route import test_route as test
+from .routes.products import products as products_blueprint
+
 
 def create_app():
     app = Flask(__name__)
     cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
-    app.register_blueprint(test, url_prefix='/test')
+    app.register_blueprint(products_blueprint, url_prefix='/products')
 
     return app
