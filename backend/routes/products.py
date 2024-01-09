@@ -47,3 +47,12 @@ def get_by_id(id):
     product = db.collection("products").where("id", "==", id).get()[0]
 
     return jsonify(product.to_dict())
+
+@products.route('/<id>', methods=['DELETE'])
+def delete_by_id(id):
+    """
+    remove a product from firebase
+    """
+    db.collection("products").doucment(id).delete()
+
+    return jsonify({'message': 'Product deleted!'})
