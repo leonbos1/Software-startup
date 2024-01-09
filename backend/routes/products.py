@@ -40,19 +40,32 @@ def post():
 
 
 @products.route('/<id>', methods=['GET'])
-def get_by_id(id):
+def get_by_id(id: str):
     """
     Get a single product from firebase
     """
-    product = db.collection("products").where("id", "==", id).get()[0]
+    products_ref = db.collection("products")
 
-    return jsonify(product.to_dict())
+    products = products_ref.where("id", "==", id).get()
+
+    if len(products) == 0:
+        return jsonify({'message': 'Product not found!'}), 404
+
+    return jsonify(products[0].to_dict())
+
 
 @products.route('/<id>', methods=['DELETE'])
-def delete_by_id(id):
+def delete(id: str):
     """
-    remove a product from firebase
+    Remove a product from firebase
     """
-    db.collection("products").doucment(id).delete()
+    products_ref = db.collection("products")
+
+    products = products_ref.where("id", "==", id).get()
+
+    if len(products) == 0:
+        return jsonify({'message': 'Product not found!'}), 404
+
+    products_ref.document(products[0].id).delete()
 
     return jsonify({'message': 'Product deleted!'})
