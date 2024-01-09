@@ -1,5 +1,7 @@
 package com.example.app.presentation.views.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,11 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -21,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +43,7 @@ import com.example.app.util.RetrofitInstance
 
 @Composable
 fun ProductDetailsScreen(navController: NavController, productId: String?) {
+
     val context = LocalContext.current
     val productDetailViewModel: ProductDetailViewModel = viewModel(factory = ProductDetailViewModelFactory())
 
@@ -49,6 +56,7 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
     val productDetailsState = productDetailViewModel.productDetails.collectAsState().value
 
     Column(modifier = Modifier.fillMaxSize().padding(5.dp)) {
+
         IconButton(onClick = { navController.navigateUp() }) {
             Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
         }
@@ -64,22 +72,6 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
                     TableLayout(productDetails = productDetails)
 
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 15.dp, bottom = 10.dp),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Button(
-                            onClick = { },
-                            colors = ButtonDefaults.buttonColors(
-                                Color(0xFFFFA500) // Orange color
-                            )
-                        ) {
-                            Text("Whatsapp bieder!")
-                        }
-                    }
                 }
             }
             is Resource.Error -> {
@@ -94,7 +86,16 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
 
 @Composable
 fun TableLayout(productDetails: ProductResponse) {
-    Column {
+
+    Column(modifier = Modifier
+        .height(230.dp)
+        .padding(10.dp)
+
+        .shadow(20.dp)
+        .border(width = 2.dp,
+            color = Color(0xFFF7F7F7),
+            shape = RoundedCornerShape(5.dp))
+        .background(Color(0xFFF7F7F7))) {
         Row(modifier = Modifier.padding(8.dp)) {
             Text("product naam: ", fontWeight = FontWeight.Bold)
             Text(productDetails.name)
@@ -106,6 +107,22 @@ fun TableLayout(productDetails: ProductResponse) {
         Row(modifier = Modifier.padding(8.dp)) {
             Text("telefoon nummer klant: ", fontWeight = FontWeight.Bold)
             Text(productDetails.phone_number)
+        }
+        Row(
+
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 15.dp, bottom = 10.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = { },
+                colors = ButtonDefaults.buttonColors(
+                    Color(0xFFA0C334) // Orange color
+                )
+            ) {
+                Text("Whatsapp aanbieder!")
+            }
         }
 
     }

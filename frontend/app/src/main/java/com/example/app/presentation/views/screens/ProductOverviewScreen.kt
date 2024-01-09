@@ -92,7 +92,7 @@ fun ProductItem(navController: NavController, productItem: ProductResponse) {
             defaultElevation = 6.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = Color(81f / 255f, 213f / 255f, 75f / 255f),
+            containerColor = Color(0xFFF7F7F7),
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -129,7 +129,7 @@ fun CardDetails(navController: NavController, productItem: ProductResponse) {
             Button(
                 onClick = { navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id)) },
                 colors = ButtonDefaults.buttonColors(
-                    Color(0xFFFFA500) // Orange color
+                    Color(0xFFA0C334) // Orange color
                 )
             ) {
                 Text("Meer details")
