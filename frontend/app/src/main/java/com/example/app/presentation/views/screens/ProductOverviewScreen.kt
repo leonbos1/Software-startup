@@ -120,6 +120,7 @@ fun CardDetails(navController: NavController, productItem: ProductResponse) {
                 text = "Tht datum: ${productItem.expiration_date}",
                 fontSize = 20.sp,)
         }
+        Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()

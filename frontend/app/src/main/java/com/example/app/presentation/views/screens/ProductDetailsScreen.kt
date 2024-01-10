@@ -1,5 +1,10 @@
 package com.example.app.presentation.views.screens
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +36,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,7 +50,6 @@ import com.example.app.util.RetrofitInstance
 
 @Composable
 fun ProductDetailsScreen(navController: NavController, productId: String?) {
-
     val context = LocalContext.current
     val productDetailViewModel: ProductDetailViewModel = viewModel(factory = ProductDetailViewModelFactory())
 
@@ -55,7 +61,9 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
 
     val productDetailsState = productDetailViewModel.productDetails.collectAsState().value
 
-    Column(modifier = Modifier.fillMaxSize().padding(5.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(5.dp)) {
 
         IconButton(onClick = { navController.navigateUp() }) {
             Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -69,7 +77,7 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
                 productDetailsState.data?.let { productDetails ->
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    TableLayout(productDetails = productDetails)
+                    TableLayout(productDetails = productDetails, context = context)
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -85,40 +93,86 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
 }
 
 @Composable
-fun TableLayout(productDetails: ProductResponse) {
+fun TableLayout(productDetails: ProductResponse, context: Context) {
 
+    val context = LocalContext.current
     Column(modifier = Modifier
-        .height(230.dp)
+        .height(400.dp)
         .padding(10.dp)
 
         .shadow(20.dp)
-        .border(width = 2.dp,
+        .border(
+            width = 2.dp,
             color = Color(0xFFF7F7F7),
-            shape = RoundedCornerShape(5.dp))
+            shape = RoundedCornerShape(5.dp)
+        )
         .background(Color(0xFFF7F7F7))) {
-        Row(modifier = Modifier.padding(8.dp)) {
-            Text("product naam: ", fontWeight = FontWeight.Bold)
-            Text(productDetails.name)
+        Spacer(modifier = Modifier.height(5.dp))
+
+        Row(modifier = Modifier.padding(horizontal = 8.dp)) {
+            Text(productDetails.name, fontWeight = FontWeight.Bold, fontSize = 25.sp)
         }
-        Row(modifier = Modifier.padding(8.dp)) {
-            Text("product tht datum: ", fontWeight = FontWeight.Bold)
+        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
+            Text("Geplaatst: ", fontWeight = FontWeight.Light, fontSize = 12.sp)
+            Text(productDetails.created, fontWeight = FontWeight.Light, fontSize = 12.sp)
+        }
+        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)) {
+            Text("Beschrijving: ", fontWeight = FontWeight.Bold)
+            Text(productDetails.description)
+        }
+        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)) {
+            Text("Product tht datum: ", fontWeight = FontWeight.Bold)
             Text(productDetails.expiration_date)
         }
-        Row(modifier = Modifier.padding(8.dp)) {
-            Text("telefoon nummer klant: ", fontWeight = FontWeight.Bold)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(modifier = Modifier
+            .padding(horizontal = 8.dp)) {
+            Text("Gebruiker", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        }
+        Row(modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 3.dp)) {
+            Text("Naam: ", fontWeight = FontWeight.Bold)
+            Text(productDetails.first_name + " " + productDetails.last_name)
+        }
+        Row(modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 3.dp)) {
+            Text("Email: ", fontWeight = FontWeight.Bold)
+            Text(productDetails.email)
+        }
+        Row(modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 3.dp)) {
+            Text("Telefoon nummer: ", fontWeight = FontWeight.Bold)
             Text(productDetails.phone_number)
         }
-        Row(
 
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 15.dp, bottom = 10.dp),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.Bottom
         ) {
             Button(
-                onClick = { },
+                onClick = {
+                    val mobileNumber = productDetails.phone_number
+                    val message = "Hallo, ${productDetails.first_name} ik zou graag het product: ${productDetails.name} willen ophalen! Kunnen wij een afspraak maken?"
+                    val whatsappIntent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse("https://api.whatsapp.com/send?phone=$mobileNumber&text=$message")
+                        setPackage("com.whatsapp")
+                    }
+
+                    if (appInstalledOrNot(whatsappIntent, context)) {
+                        context.startActivity(whatsappIntent)
+                    } else {
+                        Toast.makeText(context, "WhatsApp not installed on your device", Toast.LENGTH_SHORT).show()
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
-                    Color(0xFFA0C334) // Orange color
+                    Color(0xFFA0C334) // Your desired color
                 )
             ) {
                 Text("Whatsapp aanbieder!")
@@ -128,8 +182,14 @@ fun TableLayout(productDetails: ProductResponse) {
     }
 }
 
+fun appInstalledOrNot(intent: Intent, context: Context): Boolean {
+    val activities = context.packageManager.queryIntentActivities(intent, 0)
+    return activities.size > 0
+}
+
 class ProductDetailViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ProductDetailViewModel(ProductOverviewRepositoryImplementation(RetrofitInstance.backendApi)) as T
     }
 }
+//val message = "Hallo, ${productDetails.first_name} ik zou graag het product: ${productDetails.name} willen ophalen! Kunnen wij een afspraak maken?"
