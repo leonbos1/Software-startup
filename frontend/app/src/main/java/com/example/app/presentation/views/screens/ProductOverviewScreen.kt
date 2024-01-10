@@ -1,9 +1,10 @@
 package com.example.app.presentation.views.screens
 
-import android.graphics.Color.rgb
+import android.os.Build
 import com.example.app.data.repository.ProductOverviewRepositoryImplementation
 import com.example.app.presentation.viewmodels.ProductOverviewViewModel
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,21 +16,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -40,12 +46,25 @@ import com.example.app.common.Screens
 import com.example.app.data.remote.response.ProductResponse
 import com.example.app.util.RetrofitInstance
 import kotlinx.coroutines.flow.collectLatest
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProductOverviewScreen(navController: NavController) {
     val viewModel: ProductOverviewViewModel = viewModel(factory = FoodOverviewModelFactory())
     val productList = viewModel.product.collectAsState().value
     val context = LocalContext.current
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    var searchQuery by remember { mutableStateOf("") }
+
+    val sortedAndFilteredList = productList
+        .sortedBy {
+            LocalDate.parse(it.expiration_date, dateFormatter)
+        }
+        .filter {
+            it.name.contains(searchQuery, ignoreCase = true)
+        }
 
     LaunchedEffect(key1 = viewModel.showErrorToastChannel) {
         viewModel.showErrorToastChannel.collectLatest { show ->
@@ -62,8 +81,22 @@ fun ProductOverviewScreen(navController: NavController) {
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    ){
-        if (productList.isEmpty()) {
+    ) {
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("Search") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Blue,
+                unfocusedBorderColor = Color.Gray
+            )
+        )
+
+        if (sortedAndFilteredList.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -76,8 +109,8 @@ fun ProductOverviewScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(16.dp)
             ) {
-                items(productList.size) { index ->
-                    ProductItem(navController, productList[index])
+                items(sortedAndFilteredList.size) { index ->
+                    ProductItem(navController, sortedAndFilteredList[index])
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
