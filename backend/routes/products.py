@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from ..extensions import db
 from ..models.product import Product
+from ..utills.auth import logged_in_required, get_safe_user
 
 products = Blueprint('products', __name__)
 
@@ -16,7 +17,8 @@ def get():
 
 
 @products.route('', methods=['POST'])
-def post():
+@logged_in_required
+def post(current_user):
     """
     Create a new product in firebase
     """
@@ -31,12 +33,13 @@ def post():
         last_name=data['last_name'],
         email=data['email'],
         address=data['address'],
-        city=data['city']
+        city=data['city'],
+        user=get_safe_user(current_user)
     )
 
     db.collection("products").add(product.to_dict())
 
-    return jsonify({'message': 'Product created!'})
+    return jsonify(product.to_dict())
 
 
 @products.route('/<id>', methods=['GET'])
@@ -55,7 +58,8 @@ def get_by_id(id: str):
 
 
 @products.route('/<id>', methods=['DELETE'])
-def delete(id: str):
+@logged_in_required
+def delete(current_user, id: str):
     """
     Remove a product from firebase
     """
@@ -65,6 +69,11 @@ def delete(id: str):
 
     if len(products) == 0:
         return jsonify({'message': 'Product not found!'}), 404
+
+    product = products[0].to_dict()
+
+    if product['user']['id'] != current_user['id']:
+        return jsonify({'message': 'Unauthorized!'}), 401
 
     products_ref.document(products[0].id).delete()
 

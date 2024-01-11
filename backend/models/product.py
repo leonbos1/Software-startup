@@ -1,5 +1,6 @@
 import datetime
 from .base import Base
+from .user import User
 
 
 class Product(Base):
@@ -12,8 +13,9 @@ class Product(Base):
     email: str
     address: str
     city: str
+    user: User
 
-    def __init__(self, name, description, expiration_date, phone_number, first_name, last_name, email, address, city):
+    def __init__(self, name, description, expiration_date, phone_number, first_name, last_name, email, address, city, user):
         self.name = name
         self.description = description
         self.expiration_date = expiration_date
@@ -23,6 +25,7 @@ class Product(Base):
         self.email = email
         self.address = address
         self.city = city
+        self.user = user
 
         Base.__init__(self)
 
@@ -41,6 +44,21 @@ class Product(Base):
             'email': self.email,
             'address': self.address,
             'city': self.city,
+            'user': self.user,
             'created': self.created,
             'updated': self.updated
         }
+
+    def from_dict(data):
+        return Product(
+            name=data['name'],
+            description=data['description'],
+            expiration_date=data['expiration_date'],
+            phone_number=data['phone_number'],
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            email=data['email'],
+            address=data['address'],
+            city=data['city'],
+            user=data['user']
+        )

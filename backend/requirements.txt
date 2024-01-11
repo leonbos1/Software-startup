@@ -4,3 +4,4 @@ flask_cors==3.0.10
 Authlib==1.0.0
 firebase-admin==5.0.0
 pytest
+flask_restful
