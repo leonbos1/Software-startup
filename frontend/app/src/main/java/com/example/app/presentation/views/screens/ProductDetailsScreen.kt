@@ -2,7 +2,6 @@ package com.example.app.presentation.views.screens
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -20,9 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -37,13 +34,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.app.data.remote.response.ProductResponse
-import com.example.app.data.repository.ProductOverviewRepositoryImplementation
+import com.example.app.data.repository.ProductRepositoryImplementation
 import com.example.app.presentation.viewmodels.ProductDetailViewModel
 import com.example.app.util.Resource
 import com.example.app.util.RetrofitInstance
@@ -157,6 +153,7 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
             verticalAlignment = Alignment.Bottom
         ) {
             Button(
+                //NEEDS TO BE TESTED
                 onClick = {
                     val mobileNumber = productDetails.phone_number
                     val message = "Hallo, ${productDetails.first_name} ik zou graag het product: ${productDetails.name} willen ophalen! Kunnen wij een afspraak maken?"
@@ -189,7 +186,6 @@ fun appInstalledOrNot(intent: Intent, context: Context): Boolean {
 
 class ProductDetailViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductDetailViewModel(ProductOverviewRepositoryImplementation(RetrofitInstance.backendApi)) as T
+        return ProductDetailViewModel(ProductRepositoryImplementation(RetrofitInstance.backendApi)) as T
     }
 }
-//val message = "Hallo, ${productDetails.first_name} ik zou graag het product: ${productDetails.name} willen ophalen! Kunnen wij een afspraak maken?"

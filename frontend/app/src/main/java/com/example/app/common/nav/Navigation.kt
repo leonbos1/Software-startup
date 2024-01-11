@@ -11,7 +11,7 @@ import com.example.app.common.Screens
 import com.example.app.presentation.views.screens.ProductDetailsScreen
 import com.example.app.presentation.views.screens.ProductOverviewScreen
 import com.example.app.presentation.views.screens.AccountScreen
-
+import com.example.app.presentation.views.screens.AddProductScreen
 
 
 @Composable
@@ -31,6 +31,9 @@ fun Navigation(navController: NavHostController) {
         }
         composable(route = Screens.AccountScreen.route) {
             AccountScreen(navController)
+        }
+        composable(route = Screens.AddProductScreen.route) {
+            AddProductScreen(navController)
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.example.app.presentation.views.screens
 
 import android.os.Build
-import com.example.app.data.repository.ProductOverviewRepositoryImplementation
+import com.example.app.data.repository.ProductRepositoryImplementation
 import com.example.app.presentation.viewmodels.ProductOverviewViewModel
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -24,6 +26,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,12 +40,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.app.R
 import com.example.app.common.Screens
 import com.example.app.data.remote.response.ProductResponse
 import com.example.app.util.RetrofitInstance
@@ -52,8 +58,8 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProductOverviewScreen(navController: NavController) {
-    val viewModel: ProductOverviewViewModel = viewModel(factory = FoodOverviewModelFactory())
-    val productList = viewModel.product.collectAsState().value
+    val productOverviewViewModel: ProductOverviewViewModel = viewModel(factory = ProductOverviewModelFactory())
+    val productList = productOverviewViewModel.product.collectAsState().value
     val context = LocalContext.current
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     var searchQuery by remember { mutableStateOf("") }
@@ -66,8 +72,8 @@ fun ProductOverviewScreen(navController: NavController) {
             it.name.contains(searchQuery, ignoreCase = true)
         }
 
-    LaunchedEffect(key1 = viewModel.showErrorToastChannel) {
-        viewModel.showErrorToastChannel.collectLatest { show ->
+    LaunchedEffect(key1 = productOverviewViewModel.showErrorToastChannel) {
+        productOverviewViewModel.showErrorToastChannel.collectLatest { show ->
             if (show) {
                 Toast.makeText(
                     context, "Error", Toast.LENGTH_SHORT
@@ -76,26 +82,45 @@ fun ProductOverviewScreen(navController: NavController) {
         }
     }
 
+    productOverviewViewModel.loadProducts()
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Search") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(20.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Blue,
-                unfocusedBorderColor = Color.Gray
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search") },
+                modifier = Modifier
+                    .width(325.dp)
+                    .padding(16.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Blue,
+                    unfocusedBorderColor = Color.Gray
+                )
             )
-        )
 
+            IconButton(
+                modifier = Modifier
+                    .width(200.dp)
+                    .padding(16.dp),
+                onClick = { navController.navigate(Screens.AddProductScreen.route) }) {
+                Icon(
+                    painter = painterResource(R.drawable.add_plus_icon),
+                    contentDescription = "add button",
+                    modifier = Modifier.size(35.dp)
+                )
+            }
+
+        }
         if (sortedAndFilteredList.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -110,7 +135,7 @@ fun ProductOverviewScreen(navController: NavController) {
                 contentPadding = PaddingValues(16.dp)
             ) {
                 items(sortedAndFilteredList.size) { index ->
-                    ProductItem(navController, sortedAndFilteredList[index])
+                    ProductItem(navController, sortedAndFilteredList[index], productOverviewViewModel)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -119,7 +144,7 @@ fun ProductOverviewScreen(navController: NavController) {
 }
 
 @Composable
-fun ProductItem(navController: NavController, productItem: ProductResponse) {
+fun ProductItem(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -132,12 +157,12 @@ fun ProductItem(navController: NavController, productItem: ProductResponse) {
             .height(height = 240.dp)
             .padding(5.dp)
     ) {
-        CardDetails(navController, productItem)
+        CardDetails(navController, productItem, productOverviewViewModel)
     }
 }
 
 @Composable
-fun CardDetails(navController: NavController, productItem: ProductResponse) {
+fun CardDetails(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel) {
     Column {
         Column(
             modifier = Modifier
@@ -160,6 +185,14 @@ fun CardDetails(navController: NavController, productItem: ProductResponse) {
                 .padding(end = 15.dp, bottom = 3.dp),
             horizontalArrangement = Arrangement.End
         ) {
+            IconButton(onClick = {
+                productOverviewViewModel.deleteProduct(productItem.id)
+            }) {
+                Icon(
+                    painter = painterResource(R.drawable.remove_icon),
+                    contentDescription = "remove button"
+                )
+            }
             Button(
                 onClick = { navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id)) },
                 colors = ButtonDefaults.buttonColors(
@@ -172,8 +205,8 @@ fun CardDetails(navController: NavController, productItem: ProductResponse) {
     }
 }
 
-class FoodOverviewModelFactory : ViewModelProvider.Factory {
+class ProductOverviewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductOverviewViewModel(ProductOverviewRepositoryImplementation(RetrofitInstance.backendApi)) as T
+        return ProductOverviewViewModel(ProductRepositoryImplementation(RetrofitInstance.backendApi)) as T
     }
 }

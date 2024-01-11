@@ -4,7 +4,7 @@ package com.example.app.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.data.remote.response.ProductResponse
-import com.example.app.data.repository.ProductOverviewRepository;
+import com.example.app.data.repository.ProductRepository;
 import com.example.app.util.Resource
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProductOverviewViewModel(
-    private val productOverviewRepository: ProductOverviewRepository
+    private val productRepository: ProductRepository
 ): ViewModel() {
 
     private val _product = MutableStateFlow<List<ProductResponse>>(emptyList())
@@ -26,7 +26,7 @@ class ProductOverviewViewModel(
 
     init {
         viewModelScope.launch {
-            productOverviewRepository.getAllProducts().collectLatest { result ->
+            productRepository.getAllProducts().collectLatest { result ->
                 when(result) {
                     is Resource.Error -> {
                         _showErrorToastChannel.send(true)
@@ -42,4 +42,28 @@ class ProductOverviewViewModel(
         }
     }
 
+    fun deleteProduct(productId: String) {
+        viewModelScope.launch {
+            when (productRepository.deleteProduct(productId)) {
+                is Resource.Success -> {
+                    loadProducts()
+                }
+                is Resource.Error -> {
+                    _showErrorToastChannel.send(true)
+                }
+                is Resource.Loading -> TODO()
+            }
+        }
+    }
+
+   fun loadProducts() {
+        viewModelScope.launch {
+            productRepository.getAllProducts().collectLatest { result ->
+                result.data?.let { products ->
+                    _product.update { products }
+                }
+            }
+        }
+    }
 }
+
