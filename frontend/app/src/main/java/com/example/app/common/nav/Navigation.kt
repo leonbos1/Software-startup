@@ -40,5 +40,8 @@ fun Navigation(navController: NavHostController) {
         composable(route = Screens.LoginScreen.route) {
             login(navController)
         }
+        composable(route = Screens.RegisterScreen.route) {
+            register(navController)
+        }
     }
 }
