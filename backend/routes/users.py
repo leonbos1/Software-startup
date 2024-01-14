@@ -14,14 +14,18 @@ def post():
     """
     data = request.get_json()
 
-    user = User(
-        first_name=data['firstName'],
-        last_name=data['lastName'],
-        email=data['email'],
-        phone_number=data['phoneNumber'],
-        username=data['userName'],
-        password=generate_password_hash(data['password'], method='scrypt')
-    )
+    try:
+        user = User(
+            first_name=data['firstName'],
+            last_name=data['lastName'],
+            email=data['email'],
+            phone_number=data['phoneNumber'],
+            username=data['userName'],
+            password=generate_password_hash(data['password'], method='scrypt')
+        )
+
+    except:
+        return jsonify({'message': 'Invalid request!'}), 400
 
     username_exists = db.collection("users").where(
         "username", "==", user.username).get()
@@ -79,9 +83,11 @@ def login():
     Login a user
     """
     data = request.get_json()
-    print(data['userName'])
-    username = data["userName"]
-    password = data["password"]
+    try:
+        username = data["userName"]
+        password = data["password"]
+    except:
+        return jsonify({'message': 'Invalid request!, userName and password are required'}), 400
 
     users_ref = db.collection("users")
 
@@ -94,7 +100,7 @@ def login():
 
     userObject = user.to_dict()
 
-    if check_password_hash(password, userObject['password']):
+    if not check_password_hash(userObject['password'], password):
         return jsonify({'message': 'Invalid password!'}), 400
 
     token = generate_token()
