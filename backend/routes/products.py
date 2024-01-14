@@ -31,7 +31,9 @@ def post():
         last_name=data['last_name'],
         email=data['email'],
         address=data['address'],
-        city=data['city']
+        address_number=data['address_number'],
+        city=data['city'],
+        postal_code=data['postal_code']
     )
 
     db.collection("products").add(product.to_dict())
@@ -69,3 +71,4 @@ def delete(id: str):
     products_ref.document(products[0].id).delete()
 
     return jsonify({'message': 'Product deleted!'})
+
