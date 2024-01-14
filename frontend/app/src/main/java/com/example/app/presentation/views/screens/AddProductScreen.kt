@@ -73,13 +73,15 @@ fun AddProductScreen(
         Column(modifier = Modifier.padding(16.dp)) {
             TextFieldComponent(
                 state = nameState,
-                label = "name"
-            ) { addProductViewModel.setName(it) }
+                label = "name",
+                { addProductViewModel.setName(it) },
+            )
 
             TextFieldComponent(
                 state = descriptionState,
-                label = "Beschrijving product"
-            ) { addProductViewModel.setDescription(it) }
+                label = "Beschrijving product",
+                { addProductViewModel.setDescription(it) },
+            )
 
             ExpirationDateFormItem(expirationDateState.text) { selectedDate ->
                 addProductViewModel.setExpiration(selectedDate)
@@ -89,33 +91,39 @@ fun AddProductScreen(
 
             TextFieldComponent(
                 state = firstNameState,
-                label = "Voornaam"
-            ) { addProductViewModel.setFirstName(it) }
+                label = "Voornaam",
+                { addProductViewModel.setFirstName(it) },
+            )
 
             TextFieldComponent(
                 state = lastNameState,
-                label = "Achternaam"
-            ) { addProductViewModel.setLastName(it) }
+                label = "Achternaam",
+                { addProductViewModel.setLastName(it) },
+            )
 
             TextFieldComponent(
                 state = emailState,
                 label = "Email",
-            ) { addProductViewModel.setEmail(it) }
+                { addProductViewModel.setEmail(it) },
+            )
 
             TextFieldComponent(
                 state = addressState,
                 label = "Address",
-            ) { addProductViewModel.setAddress(it) }
+                { addProductViewModel.setAddress(it) },
+            )
 
             TextFieldComponent(
                 state = phoneNumberState,
                 label = "Telefoon nummer",
-            ) { addProductViewModel.setPhoneNumber(it) }
+                { addProductViewModel.setPhoneNumber(it) },
+            )
 
             TextFieldComponent(
                 state = cityState,
                 label = "Stad",
-            ) { addProductViewModel.setCity(it) }
+                { addProductViewModel.setCity(it) },
+            )
 
             Button(
                 onClick = {

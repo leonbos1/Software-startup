@@ -11,6 +11,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.app.presentation.states.TextFieldState
@@ -18,10 +19,17 @@ import com.example.app.ui.theme.LightGray
 import com.example.app.ui.theme.White
 
 @Composable
-fun TextFieldComponent(state: TextFieldState, label: String, onTextChanged: (String) -> Unit) {
+fun TextFieldComponent(
+    state: TextFieldState,
+    label: String,
+    onTextChanged: (String) -> Unit,
+    visualTransformation: VisualTransformation = VisualTransformation.None
+) {
 
     TextField(
+
         modifier = Modifier.fillMaxWidth(),
+        visualTransformation = visualTransformation,
         singleLine = true,
         label = { Text(text = label) },
         colors = TextFieldDefaults.colors(

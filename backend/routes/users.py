@@ -15,11 +15,11 @@ def post():
     data = request.get_json()
 
     user = User(
-        first_name=data['first_name'],
-        last_name=data['last_name'],
+        first_name=data['firstName'],
+        last_name=data['lastName'],
         email=data['email'],
-        phone_number=data['phone_number'],
-        username=data['username'],
+        phone_number=data['phoneNumber'],
+        username=data['userName'],
         password=generate_password_hash(data['password'], method='scrypt')
     )
 
@@ -79,9 +79,9 @@ def login():
     Login a user
     """
     data = request.get_json()
-
-    username = data['username']
-    password = data['password']
+    print(data['userName'])
+    username = data["userName"]
+    password = data["password"]
 
     users_ref = db.collection("users")
 
