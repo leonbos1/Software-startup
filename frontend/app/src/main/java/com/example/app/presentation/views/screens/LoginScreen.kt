@@ -10,10 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.app.common.Screens
+import com.example.app.data.AuthToken
 import com.example.app.presentation.viewmodels.LoginViewModel
 import com.example.app.ui.forms.TextFieldComponent
 
@@ -24,7 +27,7 @@ fun login(
 
 ) {
 
-
+    val context = LocalContext.current
     val userNameState = loginViewModel.userNameState.value
     val passwordState = loginViewModel.passwordState.value
 
@@ -50,8 +53,15 @@ fun login(
             visualTransformation =  PasswordVisualTransformation(),
         )
 
-        Button(onClick = { loginViewModel.login()}, Modifier.fillMaxWidth()) {
+        Button(onClick = {
+            loginViewModel.login()
+            if (AuthToken.getInstance(context) != null) {
+                navController.navigate(Screens.AccountScreen.route)
+            }
+        },
+                    Modifier.fillMaxWidth()) {
             Text("SIGN up", Modifier.padding(vertical = 1.dp))
         }
     }
 }
+
