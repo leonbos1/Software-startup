@@ -62,7 +62,7 @@ fun login(
         Button(onClick = {
             loginViewModel.login()
             Log.d("TAG", loginViewModel.collectEvent().toString())
-            if (AuthToken.getInstance(context) != null) {
+            if (AuthToken.getInstance(context).token.toString() != null) {
                 navController.navigate(Screens.AccountScreen.route)
             }
         }, colors = ButtonDefaults.buttonColors(Color(0xFFA0C334)),
