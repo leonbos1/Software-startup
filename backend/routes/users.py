@@ -44,15 +44,8 @@ def get_current_user(current_user):
     """
     Get the current user from firebase
     """
-    users_ref = db.collection("users")
-
-    users = users_ref.where("id", "==", current_user['id']).get()
-
-    if len(users) == 0:
-        return jsonify({'message': 'User not found!'}), 404
-
-    user = get_safe_user(users[0].to_dict())
-
+    user = get_safe_user(current_user)
+    
     return jsonify(user)
 
 
