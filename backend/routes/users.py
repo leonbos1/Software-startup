@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from ..extensions import db
 from ..models.user import User
-from ..utills.auth import logged_in_required, generate_token
+from ..utills.auth import logged_in_required, generate_token, get_safe_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 users = Blueprint('users', __name__)
@@ -38,8 +38,26 @@ def post():
     return jsonify(user.to_dict())
 
 
+@users.route('/current_user', methods=['GET'])
 @logged_in_required
+def get_current_user(current_user):
+    """
+    Get the current user from firebase
+    """
+    users_ref = db.collection("users")
+
+    users = users_ref.where("id", "==", current_user['id']).get()
+
+    if len(users) == 0:
+        return jsonify({'message': 'User not found!'}), 404
+
+    user = get_safe_user(users[0].to_dict())
+
+    return jsonify(user)
+
+
 @users.route('/<id>', methods=['GET'])
+@logged_in_required
 def get_by_id(current_user: User, id: str):
     """
     Get a single user from firebase

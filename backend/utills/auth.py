@@ -46,4 +46,6 @@ def get_safe_user(user) -> dict:
         'last_name': user['last_name'],
         'email': user['email'],
         'phone_number': user['phone_number'],
+        'created' : user['created'],
+        'updated' : user['updated']
     }
