@@ -1,5 +1,6 @@
 package com.example.app.presentation.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,7 @@ import com.example.app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,6 +36,19 @@ class LoginViewModel@Inject constructor(
 
     private val  _eventFlow = MutableSharedFlow<UiEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    fun collectEvent(): Boolean{
+        var login = false
+        viewModelScope.launch {
+            eventFlow.collectLatest { event ->
+                if(event.toString().equals("SnackbarEvent(message=Succes)")) {
+                    login = true
+                }
+            }
+
+        }
+        return login
+    }
 
     fun login() {
         viewModelScope.launch {
