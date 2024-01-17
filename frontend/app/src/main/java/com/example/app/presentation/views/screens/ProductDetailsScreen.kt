@@ -63,11 +63,6 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
             .fillMaxSize()
             .padding(5.dp)
     ) {
-
-        IconButton(onClick = { navController.navigateUp() }) {
-            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-        }
-
         when (productDetailsState) {
             is Resource.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))

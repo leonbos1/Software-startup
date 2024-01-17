@@ -54,9 +54,6 @@ fun AddProductScreen(
             .padding(5.dp)
             .verticalScroll(scrollState)
     ) {
-        IconButton(onClick = { navController.navigateUp() }) {
-            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
