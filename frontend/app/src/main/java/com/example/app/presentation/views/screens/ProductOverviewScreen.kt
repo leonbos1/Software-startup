@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -145,6 +146,21 @@ fun ProductOverviewScreen(navController: NavController) {
 
 @Composable
 fun ProductItem(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        ConfirmDeleteDialog(
+            onConfirm = {
+                // Handle the deletion here
+                productOverviewViewModel.deleteProduct(productItem.id)
+                showDialog = false
+            },
+            onDismiss = {
+                showDialog = false
+            }
+        )
+    }
+
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -157,12 +173,12 @@ fun ProductItem(navController: NavController, productItem: ProductResponse, prod
             .height(height = 240.dp)
             .padding(5.dp)
     ) {
-        CardDetails(navController, productItem, productOverviewViewModel)
+        CardDetails(navController, productItem, productOverviewViewModel, { showDialog = true })
     }
 }
 
 @Composable
-fun CardDetails(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel) {
+fun CardDetails(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel, onDeleteClick: () -> Unit) {
     Column {
         Column(
             modifier = Modifier
@@ -183,18 +199,16 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 15.dp, bottom = 3.dp),
-            horizontalArrangement = Arrangement.SpaceBetween // Use SpaceBetween to keep the delete button on the left
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = {
-                productOverviewViewModel.deleteProduct(productItem.id)
-            }) {
+            IconButton(onClick = onDeleteClick) {
                 Icon(
                     painter = painterResource(R.drawable.remove_icon),
                     contentDescription = "remove button"
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp)) // Add space between the buttons
+            Spacer(modifier = Modifier.width(16.dp))
 
             Button(
                 onClick = { navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id)) },
@@ -206,6 +220,29 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
             }
         }
     }
+}
+
+@Composable
+fun ConfirmDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Confirm Deletion")
+        },
+        text = {
+            Text("Are you sure you want to delete this product?")
+        },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text("Yes")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("No")
+            }
+        }
+    )
 }
 
 class ProductOverviewModelFactory : ViewModelProvider.Factory {
