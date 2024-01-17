@@ -21,7 +21,11 @@ def post():
             email=data['email'],
             phone_number=data['phoneNumber'],
             username=data['userName'],
-            password=generate_password_hash(data['password'], method='scrypt')
+            password=generate_password_hash(data['password'], method='scrypt'),
+            address=data['address'],
+            address_number=data['addresNumber'],
+            city=data['city'],
+            postal_code=data['postalCode']
         )
 
     except:
