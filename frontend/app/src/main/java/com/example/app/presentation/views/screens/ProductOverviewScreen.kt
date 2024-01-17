@@ -86,6 +86,7 @@ fun ProductOverviewScreen(navController: NavController) {
 
     Column(
         modifier = Modifier
+            .padding(start = 20.dp, end = 20.dp)
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -99,8 +100,7 @@ fun ProductOverviewScreen(navController: NavController) {
                 onValueChange = { searchQuery = it },
                 label = { Text("Search") },
                 modifier = Modifier
-                    .width(325.dp)
-                    .padding(16.dp),
+                    .width(250.dp),
                 shape = RoundedCornerShape(20.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Blue,
@@ -110,8 +110,7 @@ fun ProductOverviewScreen(navController: NavController) {
 
             IconButton(
                 modifier = Modifier
-                    .width(200.dp)
-                    .padding(16.dp),
+                    .width(200.dp),
                 onClick = { navController.navigate(Screens.AddProductScreen.route) }) {
                 Icon(
                     painter = painterResource(R.drawable.add_plus_icon),
@@ -130,9 +129,10 @@ fun ProductOverviewScreen(navController: NavController) {
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(16.dp)
             ) {
                 items(sortedAndFilteredList.size) { index ->
                     ProductItem(navController, sortedAndFilteredList[index], productOverviewViewModel)
