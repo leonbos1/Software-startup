@@ -183,7 +183,7 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 15.dp, bottom = 3.dp),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween // Use SpaceBetween to keep the delete button on the left
         ) {
             IconButton(onClick = {
                 productOverviewViewModel.deleteProduct(productItem.id)
@@ -193,6 +193,9 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
                     contentDescription = "remove button"
                 )
             }
+
+            Spacer(modifier = Modifier.width(16.dp)) // Add space between the buttons
+
             Button(
                 onClick = { navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id)) },
                 colors = ButtonDefaults.buttonColors(

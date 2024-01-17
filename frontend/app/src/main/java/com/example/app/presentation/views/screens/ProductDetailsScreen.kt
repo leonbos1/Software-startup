@@ -47,7 +47,8 @@ import com.example.app.util.RetrofitInstance
 @Composable
 fun ProductDetailsScreen(navController: NavController, productId: String?) {
     val context = LocalContext.current
-    val productDetailViewModel: ProductDetailViewModel = viewModel(factory = ProductDetailViewModelFactory())
+    val productDetailViewModel: ProductDetailViewModel =
+        viewModel(factory = ProductDetailViewModelFactory())
 
     LaunchedEffect(productId) {
         productId?.let {
@@ -57,9 +58,11 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
 
     val productDetailsState = productDetailViewModel.productDetails.collectAsState().value
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(5.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(5.dp)
+    ) {
 
         IconButton(onClick = { navController.navigateUp() }) {
             Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -69,6 +72,7 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
             is Resource.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
+
             is Resource.Success -> {
                 productDetailsState.data?.let { productDetails ->
                     Spacer(modifier = Modifier.height(16.dp))
@@ -78,9 +82,14 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
+
             is Resource.Error -> {
-                Text("Error fetching product details", modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text(
+                    "Error fetching product details",
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
+
             null -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
@@ -92,17 +101,19 @@ fun ProductDetailsScreen(navController: NavController, productId: String?) {
 fun TableLayout(productDetails: ProductResponse, context: Context) {
 
     val context = LocalContext.current
-    Column(modifier = Modifier
-        .height(400.dp)
-        .padding(10.dp)
+    Column(
+        modifier = Modifier
+            .height(400.dp)
+            .padding(10.dp)
 
-        .shadow(20.dp)
-        .border(
-            width = 2.dp,
-            color = Color(0xFFF7F7F7),
-            shape = RoundedCornerShape(5.dp)
-        )
-        .background(Color(0xFFF7F7F7))) {
+            .shadow(20.dp)
+            .border(
+                width = 2.dp,
+                color = Color(0xFFF7F7F7),
+                shape = RoundedCornerShape(5.dp)
+            )
+            .background(Color(0xFFF7F7F7))
+    ) {
         Spacer(modifier = Modifier.height(5.dp))
 
         Row(modifier = Modifier.padding(horizontal = 8.dp)) {
@@ -112,8 +123,10 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
             Text("Geplaatst: ", fontWeight = FontWeight.Light, fontSize = 12.sp)
             Text(productDetails.created, fontWeight = FontWeight.Light, fontSize = 12.sp)
         }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)) {
+        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
             Text("Beschrijving: ", fontWeight = FontWeight.Bold)
+        }
+        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
             Text(productDetails.description)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)) {
@@ -123,22 +136,30 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(modifier = Modifier
-            .padding(horizontal = 8.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+        ) {
             Text("Gebruiker", fontWeight = FontWeight.Bold, fontSize = 20.sp)
         }
-        Row(modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 3.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 3.dp)
+        ) {
             Text("Naam: ", fontWeight = FontWeight.Bold)
             Text(productDetails.first_name + " " + productDetails.last_name)
         }
-        Row(modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 3.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 3.dp)
+        ) {
             Text("Email: ", fontWeight = FontWeight.Bold)
             Text(productDetails.email)
         }
-        Row(modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 3.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 3.dp)
+        ) {
             Text("Telefoon nummer: ", fontWeight = FontWeight.Bold)
             Text(productDetails.phone_number)
         }
@@ -156,16 +177,22 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
                 //NEEDS TO BE TESTED
                 onClick = {
                     val mobileNumber = productDetails.phone_number
-                    val message = "Hallo, ${productDetails.first_name} ik zou graag het product: ${productDetails.name} willen ophalen! Kunnen wij een afspraak maken?"
+                    val message =
+                        "Hallo, ${productDetails.first_name} ik zou graag het product: ${productDetails.name} willen ophalen! Kunnen wij een afspraak maken?"
                     val whatsappIntent = Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse("https://api.whatsapp.com/send?phone=$mobileNumber&text=$message")
+                        data =
+                            Uri.parse("https://api.whatsapp.com/send?phone=$mobileNumber&text=$message")
                         setPackage("com.whatsapp")
                     }
 
                     if (appInstalledOrNot(whatsappIntent, context)) {
                         context.startActivity(whatsappIntent)
                     } else {
-                        Toast.makeText(context, "WhatsApp not installed on your device", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "WhatsApp not installed on your device",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
