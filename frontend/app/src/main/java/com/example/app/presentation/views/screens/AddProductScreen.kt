@@ -9,15 +9,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -25,9 +24,11 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.app.common.UiEvents
 import com.example.app.presentation.viewmodels.AddProductViewModel
 import com.example.app.ui.forms.TextFieldComponent
 
@@ -48,6 +49,23 @@ fun AddProductScreen(
     val expirationDateState = addProductViewModel.expirationState.value
 
     val scrollState = rememberScrollState()
+    val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(Unit) {
+        addProductViewModel.eventFlow.collect { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                is UiEvents.NavigateToProductOverview -> {
+                    navController.navigate("productOverviewScreen")
+                }
+            }
+        }
+    }
 
     Column(
         Modifier
@@ -80,7 +98,10 @@ fun AddProductScreen(
                 { addProductViewModel.setDescription(it) },
             )
 
-            ExpirationDateFormItem(expirationDateState.text) { selectedDate ->
+            ExpirationDateFormItem(
+                expirationDate = expirationDateState.text,
+                errorState = expirationDateState.error
+            ) { selectedDate ->
                 addProductViewModel.setExpiration(selectedDate)
             }
 
@@ -125,7 +146,6 @@ fun AddProductScreen(
             Button(
                 onClick = {
                     addProductViewModel.addProduct()
-                    navController.navigateUp()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -136,9 +156,15 @@ fun AddProductScreen(
 }
 
 @Composable
-fun ExpirationDateFormItem(expirationDate: String, onDateSelected: (String) -> Unit) {
+fun ExpirationDateFormItem(expirationDate: String, errorState: String?, onDateSelected: (String) -> Unit) {
     val context = LocalContext.current
     val focusRequester = FocusRequester()
+
+    val labelColor = if (errorState?.isNotEmpty() == true) {
+        androidx.compose.material.MaterialTheme.colors.error // Change color to error color if there's an error
+    } else {
+        androidx.compose.material.MaterialTheme.typography.body1.color // Default color
+    }
 
     fun showDatePicker() {
         val calendar = Calendar.getInstance()
@@ -159,19 +185,34 @@ fun ExpirationDateFormItem(expirationDate: String, onDateSelected: (String) -> U
         datePickerDialog.show()
     }
 
-    TextField(
-        value = expirationDate,
-        onValueChange = { },
-        label = { Text("Expiration Date") },
-        readOnly = true,
-        modifier = Modifier
-            .fillMaxWidth()
-            .focusRequester(focusRequester)
-            .onFocusChanged { focusState ->
-                if (focusState.isFocused) {
-                    showDatePicker()
+    Column {
+        TextField(
+            value = expirationDate,
+            onValueChange = { },
+            label = { Text("Expiration Date", color = labelColor) },
+            readOnly = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .onFocusChanged { focusState ->
+                    if (focusState.isFocused) {
+                        showDatePicker()
+                    }
                 }
+        )
+
+        // Display error text if errorState is not empty
+        if (errorState != "") {
+            if (errorState != null) {
+                androidx.compose.material.Text(
+                    text = errorState,
+                    style = androidx.compose.material.MaterialTheme.typography.body2,
+                    color = androidx.compose.material.MaterialTheme.colors.error,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-    )
+        }
+    }
 }
 
