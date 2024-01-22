@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +35,7 @@ import androidx.navigation.NavController
 import com.example.app.common.Screens
 import com.example.app.data.remote.response.SafeUserResponse
 import com.example.app.presentation.viewmodels.AccountViewModel
+import com.example.app.ui.forms.TextFieldComponent
 import com.example.app.util.Resource
 
 
@@ -70,24 +73,37 @@ fun AccountScreen(
             }
 
             is Resource.Error -> {
-                Text(
-                    "Not Logged in",
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Already have an account?", color = Color.Black)
-                    TextButton(onClick = {navController.navigate(Screens.LoginScreen.route)}) {
-                        Text("Sign In")
+                Column(
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom),
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ) {
+
+                    Text("not logged in", Modifier.padding(vertical = 1.dp))
+
+                    Button(
+                        onClick = { navController.navigate(Screens.LoginScreen.route) },
+                        colors = ButtonDefaults.buttonColors(Color(0xFFA0C334)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("SIGN in", Modifier.padding(vertical = 1.dp))
                     }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Dont have an account??", color = Color.Black)
-                    TextButton(onClick = {navController.navigate(Screens.RegisterScreen.route)}) {
-                        Text("Sign In")
+                    Divider(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(top = 48.dp)
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Dont have an account?", color = Color.Black)
+                        TextButton(onClick = { navController.navigate(Screens.RegisterScreen.route) }) {
+                            Text("Sign Up")
+                        }
                     }
                 }
             }
-
             null -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }

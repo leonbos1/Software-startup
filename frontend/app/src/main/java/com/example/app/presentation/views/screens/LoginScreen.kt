@@ -49,7 +49,7 @@ fun login(
                     navController.navigate(Screens.AccountScreen.route)
                 }
                 else {
-                    Log.d("LoginTag", "false")
+
                 }
             }
         }

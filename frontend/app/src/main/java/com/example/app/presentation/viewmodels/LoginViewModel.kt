@@ -67,6 +67,8 @@ class LoginViewModel@Inject constructor(
                     )
                 }
                 is Resource.Error->{
+                    _userNameState.value=userNameState.value.copy(error = "Username might be wrong")
+                    _passwordState.value=passwordState.value.copy(error = "Password might be wrong")
                     Log.d("TAG", "Failed")
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent("Failed")
