@@ -34,21 +34,9 @@ class LoginViewModel@Inject constructor(
     fun setUserName(value:String){ _userNameState.value = userNameState.value.copy(text = value) }
     fun setPassword(value:String){ _passwordState.value = passwordState.value.copy(text = value) }
 
-    private val  _eventFlow = MutableSharedFlow<UiEvents>()
+     val  _eventFlow = MutableSharedFlow<UiEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    fun collectEvent(): Boolean{
-        var login = false
-        viewModelScope.launch {
-            eventFlow.collectLatest { event ->
-                if(event.toString().equals("SnackbarEvent(message=Succes)")) {
-                    login = true
-                }
-            }
-
-        }
-        return login
-    }
 
     fun login() {
         viewModelScope.launch {
@@ -73,11 +61,13 @@ class LoginViewModel@Inject constructor(
 
             when(loginRequest.result){
                 is Resource.Success->{
+                    Log.d("TAG", "Success")
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent("Succes")
                     )
                 }
                 is Resource.Error->{
+                    Log.d("TAG", "Failed")
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent("Failed")
                     )

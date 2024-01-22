@@ -20,11 +20,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.app.common.Screens
 import com.example.app.data.AuthToken
 import com.example.app.presentation.viewmodels.LoginViewModel
 import com.example.app.ui.forms.TextFieldComponent
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun login(
@@ -37,6 +40,20 @@ fun login(
     val userNameState = loginViewModel.userNameState.value
     val passwordState = loginViewModel.passwordState.value
 
+    fun collectEvent(){
+
+
+        loginViewModel.viewModelScope.launch {
+            loginViewModel._eventFlow.collect { event ->
+                if(event.toString().equals("SnackbarEvent(message=Succes)")) {
+                    navController.navigate(Screens.AccountScreen.route)
+                }
+                else {
+                    Log.d("LoginTag", "false")
+                }
+            }
+        }
+    }
     Column(
         Modifier
             .padding(10.dp)
@@ -61,10 +78,8 @@ fun login(
 
         Button(onClick = {
             loginViewModel.login()
-            Log.d("TAG", loginViewModel.collectEvent().toString())
-            if (AuthToken.getInstance(context).token.toString() != null) {
-                navController.navigate(Screens.AccountScreen.route)
-            }
+            collectEvent()
+
         }, colors = ButtonDefaults.buttonColors(Color(0xFFA0C334)),
                   modifier =  Modifier.fillMaxWidth()) {
             Text("SIGN in", Modifier.padding(vertical = 1.dp))

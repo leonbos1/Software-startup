@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.app.common.Screens
+import com.example.app.presentation.views.screens.AccountEditScreen
 import com.example.app.presentation.views.screens.ProductDetailsScreen
 import com.example.app.presentation.views.screens.ProductOverviewScreen
 import com.example.app.presentation.views.screens.AccountScreen
@@ -18,7 +19,7 @@ import com.example.app.presentation.views.screens.register
 
 @Composable
 fun Navigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screens.LoginScreen.route) {
+    NavHost(navController = navController, startDestination = Screens.ProductOverviewScreen.route) {
         composable(route = Screens.ProductOverviewScreen.route) {
             ProductOverviewScreen(navController)
         }
@@ -33,6 +34,15 @@ fun Navigation(navController: NavHostController) {
                 }
         composable(route = Screens.AccountScreen.route) {
             AccountScreen(navController)
+        }
+        composable(route = Screens.AccountScreen.route + "/{userId}",
+            arguments = listOf(
+                navArgument("userId") {
+                    nullable = false
+                    type = NavType.StringType
+                })
+        ) { entry ->
+            AccountEditScreen(navController, entry.arguments?.getString("userId"))
         }
         composable(route = Screens.AddProductScreen.route) {
             AddProductScreen(navController)
