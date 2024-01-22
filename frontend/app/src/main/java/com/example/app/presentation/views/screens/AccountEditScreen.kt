@@ -1,6 +1,7 @@
 package com.example.app.presentation.views.screens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,31 +27,32 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.app.common.Screens
 import com.example.app.data.remote.response.SafeUserResponse
+import com.example.app.data.remote.response.UserResponse
 import com.example.app.presentation.viewmodels.AccountViewModel
-import com.example.app.ui.forms.TextFieldComponent
 import com.example.app.util.Resource
 
 
 @Composable
-fun AccountScreen(
+fun AccountEditScreen(
     navController: NavController,
+    userId : String?,
     accountViewModel: AccountViewModel = hiltViewModel()) {
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = accountViewModel.showErrorToastChannel) {
-        let {
-            accountViewModel.fetchSaveUser()
+    LaunchedEffect(userId) {
+        userId.let {
+            Log.d("Tag", userId.toString())
+            accountViewModel.fetchFullUser(it.toString())
         }
     }
 
-    val productDetailsState = accountViewModel.productDetails.collectAsState().value
+    val productDetailsState = accountViewModel.userDetails.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,44 +67,31 @@ fun AccountScreen(
                 productDetailsState.data?.let { productDetails ->
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    TableLayout2(productDetails = productDetails, context = context, viewModel = accountViewModel, navController = navController)
+                    TableLayout3(productDetails = productDetails, context = context, viewModel = accountViewModel, navController = navController)
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 
             is Resource.Error -> {
-                Column(
-                    Modifier
-                        .padding(10.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom),
-                    horizontalAlignment = Alignment.CenterHorizontally
-
-                ) {
-
-                    Text("not logged in", Modifier.padding(vertical = 1.dp))
-
-                    Button(
-                        onClick = { navController.navigate(Screens.LoginScreen.route) },
-                        colors = ButtonDefaults.buttonColors(Color(0xFFA0C334)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("SIGN in", Modifier.padding(vertical = 1.dp))
+                Text(
+                    "Not Logged in",
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Already have an account?", color = Color.Black)
+                    TextButton(onClick = {navController.navigate(Screens.LoginScreen.route)}) {
+                        Text("Sign In")
                     }
-                    Divider(
-                        color = Color.Black.copy(alpha = 0.3f),
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(top = 48.dp)
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Dont have an account?", color = Color.Black)
-                        TextButton(onClick = { navController.navigate(Screens.RegisterScreen.route) }) {
-                            Text("Sign Up")
-                        }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Dont have an account??", color = Color.Black)
+                    TextButton(onClick = {navController.navigate(Screens.RegisterScreen.route)}) {
+                        Text("Sign In")
                     }
                 }
             }
+
             null -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
@@ -112,7 +100,7 @@ fun AccountScreen(
 }
 
 @Composable
-fun TableLayout2(productDetails: SafeUserResponse, context: Context, viewModel: AccountViewModel, navController: NavController) {
+fun TableLayout3(productDetails: UserResponse, context: Context, viewModel: AccountViewModel, navController: NavController) {
 
     val context = LocalContext.current
     Column(
@@ -147,8 +135,8 @@ fun TableLayout2(productDetails: SafeUserResponse, context: Context, viewModel: 
             Text(productDetails.last_name, fontWeight = FontWeight.Light, fontSize = 21.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("id: ", fontWeight = FontWeight.Light, fontSize = 17.sp)
-            Text(productDetails.id, fontWeight = FontWeight.Light, fontSize = 21.sp)
+            Text("username: ", fontWeight = FontWeight.Light, fontSize = 17.sp)
+            Text(productDetails.username, fontWeight = FontWeight.Light, fontSize = 21.sp)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -163,22 +151,13 @@ fun TableLayout2(productDetails: SafeUserResponse, context: Context, viewModel: 
         ) {
             Button(onClick = {
                 viewModel.logout()
-                navController.navigate(Screens.ProductOverviewScreen.route)
-                },
-                colors = ButtonDefaults.buttonColors(
-                    Color(0xFFA0C334) // Your desired color
-                )
-            ) {
-                Text("logout")
-            }
-            Button(onClick = {
-                navController.navigate(Screens.ProductOverviewScreen.withArgs(productDetails.id))
+                navController.navigate(Screens.AccountScreen.route)
             },
                 colors = ButtonDefaults.buttonColors(
                     Color(0xFFA0C334) // Your desired color
                 )
             ) {
-                Text("edit account")
+                Text("logout")
             }
         }
 
