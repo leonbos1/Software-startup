@@ -131,7 +131,7 @@ def logout(current_user):
     """
     users_ref = db.collection("users")
 
-    users = users_ref.where("token", "==", current_user.token).get()
+    users = users_ref.where("token", "==", current_user['token']).get()
 
     if len(users) == 0:
         return jsonify({'message': 'User not found!'}), 404

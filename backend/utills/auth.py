@@ -15,7 +15,7 @@ def logged_in_required(func):
             abort(401, message="Authorization header required")
 
         user = db.collection("users").where("token", "==", token).get()
-        if len(user) == 0:
+        if len(user) == 0 or user[0].to_dict()['token'] == None:
             abort(401, message="Invalid token")
 
         user = user[0].to_dict()
