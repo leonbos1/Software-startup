@@ -17,7 +17,6 @@ def get():
     return jsonify([product.to_dict() for product in products])
 
 
-# get within radius
 @products.route("/<radius>", methods=["GET"])
 @logged_in_required
 def get_within_radius(current_user, radius):
