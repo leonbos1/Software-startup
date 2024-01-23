@@ -15,11 +15,11 @@ def logged_in_required(func):
             abort(401, message="Authorization header required")
 
         user = db.collection("users").where("token", "==", token).get()
-        if len(user) == 0 or user[0].to_dict()['token'] == None:
+        if len(user) == 0 or user[0].to_dict()["token"] == None:
             abort(401, message="Invalid token")
 
         user = user[0].to_dict()
-        user['token'] = token
+        user["token"] = token
 
         if not user:
             abort(401, message="Invalid token")
@@ -41,11 +41,8 @@ def get_safe_user(user) -> dict:
     Return a safe user dictionary
     """
     return {
-        'id': user['id'],
-        'first_name': user['first_name'],
-        'last_name': user['last_name'],
-        'email': user['email'],
-        'phone_number': user['phone_number'],
-        'created' : user['created'],
-        'updated' : user['updated']
+        "id": user["id"],
+        "username": user["username"],
+        "created": user["created"],
+        "updated": user["updated"],
     }
