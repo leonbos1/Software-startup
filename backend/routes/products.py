@@ -28,12 +28,6 @@ def post(current_user):
         name=data['name'],
         description=data['description'],
         expiration_date=data['expiration_date'],
-        phone_number=data['phone_number'],
-        first_name=data['first_name'],
-        last_name=data['last_name'],
-        email=data['email'],
-        address=data['address'],
-        city=data['city'],
         user=get_safe_user(current_user)
     )
 
