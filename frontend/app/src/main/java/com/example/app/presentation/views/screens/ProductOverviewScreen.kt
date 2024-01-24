@@ -74,14 +74,11 @@ fun ProductOverviewScreen(navController: NavController) {
         }
 
     LaunchedEffect(key1 = productOverviewViewModel.showErrorToastChannel) {
-        productOverviewViewModel.showErrorToastChannel.collectLatest { show ->
-            if (show) {
-                Toast.makeText(
-                    context, "Error", Toast.LENGTH_SHORT
-                ).show()
-            }
+        productOverviewViewModel.showErrorToastChannel.collectLatest { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
+
 
     productOverviewViewModel.loadProducts()
 
@@ -117,8 +114,8 @@ fun ProductOverviewScreen(navController: NavController) {
                     } else {
                         Toast.makeText(
                             context,
-                            "You need to log in first",
-                            Toast.LENGTH_SHORT
+                            "You need to log in first, before adding a product.",
+                            Toast.LENGTH_LONG
                         ).show()
                         navController.navigate(Screens.AccountScreen.route)
                     }
@@ -212,11 +209,13 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
                 .padding(end = 15.dp, bottom = 3.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = onDeleteClick) {
-                Icon(
-                    painter = painterResource(R.drawable.remove_icon),
-                    contentDescription = "remove button"
-                )
+            if (productOverviewViewModel.isLoggedIn()) {  // Check if the user is logged in
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.remove_icon),
+                        contentDescription = "remove button"
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))

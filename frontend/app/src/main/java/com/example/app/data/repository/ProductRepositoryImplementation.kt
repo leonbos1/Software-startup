@@ -76,9 +76,15 @@ class ProductRepositoryImplementation(
         } catch (e: IOException) {
             Resource.Error("Network error: Could not delete product")
         } catch (e: HttpException) {
-            Resource.Error("HTTP error: Could not delete product")
+            // Check if it's a 401 error
+            if (e.code() == 401) {
+                Resource.Error("You can only delete your own created products!")
+            } else {
+                Resource.Error("HTTP error: Could not delete product, ${e.localizedMessage}")
+            }
         } catch (e: Exception) {
-            Resource.Error("Unknown error occurred")
+            Resource.Error("Unknown error occurred: ${e.localizedMessage}")
         }
     }
+
 }

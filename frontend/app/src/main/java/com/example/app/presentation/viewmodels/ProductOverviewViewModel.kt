@@ -22,7 +22,7 @@ class ProductOverviewViewModel(
     private val _product = MutableStateFlow<List<ProductResponse>>(emptyList())
     val product = _product.asStateFlow()
 
-    private val _showErrorToastChannel = Channel<Boolean>()
+    private val _showErrorToastChannel = Channel<String>()
     val showErrorToastChannel = _showErrorToastChannel.receiveAsFlow()
 
     init {
@@ -30,7 +30,7 @@ class ProductOverviewViewModel(
             productRepository.getAllProducts().collectLatest { result ->
                 when(result) {
                     is Resource.Error -> {
-                        _showErrorToastChannel.send(true)
+                        _showErrorToastChannel.send("An unknown error occurred")
                     }
                     is Resource.Success -> {
                         result.data?.let { products ->
@@ -50,19 +50,22 @@ class ProductOverviewViewModel(
 
     fun deleteProduct(productId: String) {
         viewModelScope.launch {
-            when (productRepository.deleteProduct(productId)) {
+            val result = productRepository.deleteProduct(productId)
+            when (result) {
                 is Resource.Success -> {
                     loadProducts()
                 }
                 is Resource.Error -> {
-                    _showErrorToastChannel.send(true)
+                    // Send the specific error message to the view
+                    _showErrorToastChannel.send(result.message ?: "An unknown error occurred")
                 }
                 is Resource.Loading -> TODO()
             }
         }
     }
 
-   fun loadProducts() {
+
+    fun loadProducts() {
         viewModelScope.launch {
             productRepository.getAllProducts().collectLatest { result ->
                 result.data?.let { products ->
