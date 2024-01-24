@@ -18,11 +18,8 @@ import retrofit2.http.Path
 
 interface BackendApi {
     companion object {
-        const val BASE_URL = "http://10.0.2.2:5000"
+        const val BASE_URL = "https://saveplate-yvl4k4opia-ez.a.run.app/"
     }
-
-    @GET("/products")
-    suspend fun getAllProducts(): List<ProductResponse>
 
     @GET("/products/{productId}")
     suspend fun getProductDetails(@Header("Authorization") token: String, @Path("productId") productId: String): ProductResponse
@@ -32,6 +29,9 @@ interface BackendApi {
 
     @DELETE("/products/{productId}")
     suspend fun deleteProduct(@Header("Authorization") token: String, @Path("productId") productId: String)
+
+    @GET("/products/radius/{radius}")
+    suspend fun getProductsInRadius(@Header("Authorization") token: String, @Path("radius") radius: String): List<ProductResponse>
 
     @POST("/users")
     suspend fun register(@Body registerRequest: RegisterRequest): RegisterResponse

@@ -16,11 +16,10 @@ class ProductRepositoryImplementation(
     private val backendApi: BackendApi,
     private val context: Context
 ): ProductRepository {
-
-    override suspend fun getAllProducts(): Flow<Resource<List<ProductResponse>>> {
+    override suspend fun getProductsInRadius(radius: String): Flow<Resource<List<ProductResponse>>> {
         return flow {
             val productsFromBackendApi = try {
-                backendApi.getAllProducts()
+                backendApi.getProductsInRadius(AuthToken.getInstance(context).token.toString(), radius)
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error("Error loading products"))

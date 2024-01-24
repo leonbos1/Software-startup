@@ -21,8 +21,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -66,6 +71,9 @@ fun ProductOverviewScreen(navController: NavController) {
     val productList = productOverviewViewModel.product.collectAsState().value
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     var searchQuery by remember { mutableStateOf("") }
+    var selectedRadius by remember { mutableStateOf(10) }
+    val radiusOptions = listOf(5, 10, 20, 50, 100)
+    var expanded by remember { mutableStateOf(false) }
 
     val sortedAndFilteredList = productList
         .sortedBy {
@@ -110,7 +118,6 @@ fun ProductOverviewScreen(navController: NavController) {
                     unfocusedBorderColor = Color.Gray
                 )
             )
-
             IconButton(
                 modifier = Modifier
                     .width(200.dp),
@@ -121,7 +128,31 @@ fun ProductOverviewScreen(navController: NavController) {
                     modifier = Modifier.size(35.dp)
                 )
             }
-
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(8.dp)
+        ) {
+            Text("Radius: ")
+            Spacer(modifier = Modifier.width(8.dp))
+            OutlinedButton(onClick = { expanded = true }) {
+                Text("${selectedRadius}km")
+                Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                radiusOptions.forEach { radius ->
+                    DropdownMenuItem(onClick = {
+                        selectedRadius = radius
+                        expanded = false
+                        productOverviewViewModel.loadProductsInRadius(radius.toString())
+                    }) {
+                        Text("${radius}km")
+                    }
+                }
+            }
         }
         if (sortedAndFilteredList.isEmpty()) {
             Box(

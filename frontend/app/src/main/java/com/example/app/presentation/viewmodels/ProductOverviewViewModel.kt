@@ -26,7 +26,7 @@ class ProductOverviewViewModel(
 
     init {
         viewModelScope.launch {
-            productRepository.getAllProducts().collectLatest { result ->
+            productRepository.getProductsInRadius("10000").collectLatest { result ->
                 when(result) {
                     is Resource.Error -> {
                         _showErrorToastChannel.send(true)
@@ -58,9 +58,27 @@ class ProductOverviewViewModel(
 
    fun loadProducts() {
         viewModelScope.launch {
-            productRepository.getAllProducts().collectLatest { result ->
+            productRepository.getProductsInRadius("10000").collectLatest { result ->
                 result.data?.let { products ->
                     _product.update { products }
+                }
+            }
+        }
+    }
+
+    fun loadProductsInRadius(radius: String) {
+        viewModelScope.launch {
+            productRepository.getProductsInRadius(radius).collectLatest { result ->
+                when(result) {
+                    is Resource.Error -> {
+                        _showErrorToastChannel.send(true)
+                    }
+                    is Resource.Success -> {
+                        result.data?.let { products ->
+                            _product.update { products }
+                        }
+                    }
+                    is Resource.Loading -> TODO()
                 }
             }
         }
