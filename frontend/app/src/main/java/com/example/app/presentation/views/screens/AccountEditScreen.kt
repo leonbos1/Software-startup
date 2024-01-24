@@ -47,7 +47,6 @@ fun AccountEditScreen(
 
     LaunchedEffect(userId) {
         userId.let {
-            Log.d("Tag", userId.toString())
             accountViewModel.fetchFullUser(it.toString())
         }
     }

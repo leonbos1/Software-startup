@@ -30,18 +30,6 @@ class AddProductViewModel@Inject constructor(
     val nameState: State<TextFieldState> = _nameState
     private var _descriptionState = mutableStateOf(TextFieldState())
     val descriptionState: State<TextFieldState> = _descriptionState
-    private var _phoneNumberState = mutableStateOf(TextFieldState())
-    val phoneNumberState: State<TextFieldState> = _phoneNumberState
-    private var _lastNameState = mutableStateOf(TextFieldState())
-    val lastNameState: State<TextFieldState> = _lastNameState
-    private var _firstNameState = mutableStateOf(TextFieldState())
-    val firstNameState: State<TextFieldState> = _firstNameState
-    private var _emailState = mutableStateOf(TextFieldState())
-    val emailNameState: State<TextFieldState> = _emailState
-    private var _addressState = mutableStateOf(TextFieldState())
-    val addressState: State<TextFieldState> = _addressState
-    private var _cityState = mutableStateOf(TextFieldState())
-    val cityState: State<TextFieldState> = _cityState
     private var _expirationState = mutableStateOf(TextFieldState())
     val expirationState: State<TextFieldState> = _expirationState
 
@@ -51,30 +39,6 @@ class AddProductViewModel@Inject constructor(
 
     fun setDescription(value: String) {
         _descriptionState.value = descriptionState.value.copy(text = value)
-    }
-
-    fun setPhoneNumber(value: String) {
-        _phoneNumberState.value = phoneNumberState.value.copy(text = value)
-    }
-
-    fun setLastName(value: String) {
-        _lastNameState.value = lastNameState.value.copy(text = value)
-    }
-
-    fun setFirstName(value: String) {
-        _firstNameState.value = firstNameState.value.copy(text = value)
-    }
-
-    fun setEmail(value: String) {
-        _emailState.value = emailNameState.value.copy(text = value)
-    }
-
-    fun setAddress(value: String) {
-        _addressState.value = addressState.value.copy(text = value)
-    }
-
-    fun setCity(value: String) {
-        _cityState.value = cityState.value.copy(text = value)
     }
 
     fun setExpiration(value: String) {
@@ -91,12 +55,6 @@ class AddProductViewModel@Inject constructor(
             val addProductRequest = addProductUseCase(
                 name = nameState.value.text,
                 description = descriptionState.value.text,
-                phoneNumber = phoneNumberState.value.text,
-                firstName = firstNameState.value.text,
-                lastName = lastNameState.value.text,
-                email = emailNameState.value.text,
-                address = addressState.value.text,
-                city = cityState.value.text,
                 expirationDate = expirationState.value.text
             )
 
@@ -108,28 +66,6 @@ class AddProductViewModel@Inject constructor(
             if (addProductRequest.descriptionError != null) {
                 _descriptionState.value =
                     descriptionState.value.copy(error = addProductRequest.descriptionError)
-            }
-            if (addProductRequest.phoneNumberError != null) {
-                _phoneNumberState.value =
-                    phoneNumberState.value.copy(error = addProductRequest.phoneNumberError)
-            }
-            if (addProductRequest.firsNameError != null) {
-                _firstNameState.value =
-                    firstNameState.value.copy(error = addProductRequest.firsNameError)
-            }
-            if (addProductRequest.lastNameError != null) {
-                _lastNameState.value =
-                    lastNameState.value.copy(error = addProductRequest.lastNameError)
-            }
-            if (addProductRequest.emailError != null) {
-                _emailState.value = emailNameState.value.copy(error = addProductRequest.emailError)
-            }
-            if (addProductRequest.addressError != null) {
-                _addressState.value =
-                    addressState.value.copy(error = addProductRequest.addressError)
-            }
-            if (addProductRequest.cityError != null) {
-                _cityState.value = cityState.value.copy(error = addProductRequest.cityError)
             }
             if (addProductRequest.expirationDateError != null) {
                 _expirationState.value =

@@ -40,12 +40,6 @@ fun AddProductScreen(
 
     val nameState = addProductViewModel.nameState.value
     val descriptionState = addProductViewModel.descriptionState.value
-    val phoneNumberState = addProductViewModel.phoneNumberState.value
-    val firstNameState = addProductViewModel.firstNameState.value
-    val lastNameState = addProductViewModel.lastNameState.value
-    val emailState = addProductViewModel.emailNameState.value
-    val addressState = addProductViewModel.addressState.value
-    val cityState = addProductViewModel.cityState.value
     val expirationDateState = addProductViewModel.expirationState.value
 
     val scrollState = rememberScrollState()
@@ -94,7 +88,7 @@ fun AddProductScreen(
 
             TextFieldComponent(
                 state = descriptionState,
-                label = "Beschrijving product",
+                label = "Product description",
                 { addProductViewModel.setDescription(it) },
             )
 
@@ -107,49 +101,13 @@ fun AddProductScreen(
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            TextFieldComponent(
-                state = firstNameState,
-                label = "Voornaam",
-                { addProductViewModel.setFirstName(it) },
-            )
-
-            TextFieldComponent(
-                state = lastNameState,
-                label = "Achternaam",
-                { addProductViewModel.setLastName(it) },
-            )
-
-            TextFieldComponent(
-                state = emailState,
-                label = "Email",
-                { addProductViewModel.setEmail(it) },
-            )
-
-            TextFieldComponent(
-                state = addressState,
-                label = "Address",
-                { addProductViewModel.setAddress(it) },
-            )
-
-            TextFieldComponent(
-                state = phoneNumberState,
-                label = "Telefoon nummer",
-                { addProductViewModel.setPhoneNumber(it) },
-            )
-
-            TextFieldComponent(
-                state = cityState,
-                label = "Stad",
-                { addProductViewModel.setCity(it) },
-            )
-
             Button(
                 onClick = {
                     addProductViewModel.addProduct()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Product toevoegen")
+                Text("Add product")
             }
         }
     }

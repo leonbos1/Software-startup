@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -19,11 +22,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.app.common.Screens
 import com.example.app.presentation.viewmodels.AddProductViewModel
 import com.example.app.presentation.viewmodels.RegisterViewModel
 import com.example.app.ui.forms.TextFieldComponent
+import kotlinx.coroutines.launch
 
 @Composable
 fun register(
@@ -36,13 +41,36 @@ fun register(
     val phoneNumberState = registerViewModel.phoneNumberState.value
     val userNameState = registerViewModel.userNameState.value
     val passwordState = registerViewModel.passwordState.value
+    val addressState = registerViewModel.addressState.value
+    val addressNumberState = registerViewModel.addresNumberState.value
+    val cityState = registerViewModel.cityState.value
+    val postalCodeState = registerViewModel.postalCodeState.value
+
+    val scrollState = rememberScrollState()
+    val scaffoldState = rememberScaffoldState()
+
+    fun collectEvent(){
+    registerViewModel.viewModelScope.launch {
+        registerViewModel._eventFlow.collect { event ->
+            if(event.toString().equals("SnackbarEvent(message=Succes)")) {
+                navController.navigate(Screens.LoginScreen.route)
+            }
+            else {
+
+            }
+        }
+    }
+}
 
     Column(
         Modifier
             .padding(1.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(10.dp, alignment = Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally
+
+
 
     ) {
         TextFieldComponent(
@@ -71,6 +99,26 @@ fun register(
             { registerViewModel.setUserName(it) },
         )
         TextFieldComponent(
+            state = addressState,
+            label = "address",
+            { registerViewModel.setAddress(it) },
+        )
+        TextFieldComponent(
+            state = addressNumberState,
+            label = "addres Number",
+            { registerViewModel.setAddressNumber(it) },
+        )
+        TextFieldComponent(
+            state = cityState,
+            label = "city",
+            { registerViewModel.setCity(it) },
+        )
+        TextFieldComponent(
+            state = postalCodeState,
+            label = "postalCode",
+            { registerViewModel.setPostalCode(it) },
+        )
+        TextFieldComponent(
             state = passwordState,
             label = "password",
 
@@ -78,7 +126,10 @@ fun register(
             visualTransformation =  PasswordVisualTransformation(),
         )
 
-        Button(onClick = { registerViewModel.register()}, Modifier.fillMaxWidth()) {
+        Button(onClick = {
+            collectEvent()
+            registerViewModel.register()
+                         }, Modifier.fillMaxWidth()) {
             Text("SIGN up", Modifier.padding(vertical = 1.dp))
         }
         Divider(

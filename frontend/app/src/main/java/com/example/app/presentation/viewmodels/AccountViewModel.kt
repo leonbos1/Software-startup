@@ -20,20 +20,17 @@ class AccountViewModel @Inject constructor(
     private val userRepository: UserRepository
 ): ViewModel() {
     private val _userLogout = MutableStateFlow<Resource<LogoutResponse>?>(null)
-    val userLogout = _userLogout.asStateFlow()
 
     private val _userDetails = MutableStateFlow<Resource<UserResponse>?>(null)
     val userDetails = _userDetails.asStateFlow()
 
-    private val _productDetails = MutableStateFlow<Resource<SafeUserResponse>?>(null)
-    val productDetails = _productDetails.asStateFlow()
     private val _showErrorToastChannel = Channel<Boolean>()
     val showErrorToastChannel = _showErrorToastChannel.receiveAsFlow()
 
     fun fetchSaveUser() {
         viewModelScope.launch {
             userRepository.getCurUser().collectLatest { result ->
-                _productDetails.value = result
+                fetchFullUser(result.data?.id.toString())
             }
         }
     }
