@@ -191,7 +191,7 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
                 text = productItem.description,
                 fontSize = 20.sp,)
             Text(
-                text = "Tht datum: ${productItem.expiration_date}",
+                text = "BB date: ${productItem.expiration_date}",
                 fontSize = 20.sp,)
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -216,7 +216,7 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
                     Color(0xFFA0C334) // Orange color
                 )
             ) {
-                Text("Meer details")
+                Text("More info")
             }
         }
     }

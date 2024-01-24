@@ -115,17 +115,17 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
             Text(productDetails.name, fontWeight = FontWeight.Bold, fontSize = 25.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("Geplaatst: ", fontWeight = FontWeight.Light, fontSize = 12.sp)
+            Text("Placed on: ", fontWeight = FontWeight.Light, fontSize = 12.sp)
             Text(productDetails.created, fontWeight = FontWeight.Light, fontSize = 12.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("Beschrijving: ", fontWeight = FontWeight.Bold)
+            Text("Description: ", fontWeight = FontWeight.Bold)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
             Text(productDetails.description)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)) {
-            Text("Product tht datum: ", fontWeight = FontWeight.Bold)
+            Text("Product Expiry Date: ", fontWeight = FontWeight.Bold)
             Text(productDetails.expiration_date)
         }
 
@@ -135,13 +135,13 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
             modifier = Modifier
                 .padding(horizontal = 8.dp)
         ) {
-            Text("Gebruiker", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Text("User", fontWeight = FontWeight.Bold, fontSize = 20.sp)
         }
         Row(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 3.dp)
         ) {
-            Text("Naam: ", fontWeight = FontWeight.Bold)
+            Text("Name: ", fontWeight = FontWeight.Bold)
             Text(productDetails.first_name + " " + productDetails.last_name)
         }
         Row(
@@ -155,7 +155,7 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 3.dp)
         ) {
-            Text("Telefoon nummer: ", fontWeight = FontWeight.Bold)
+            Text("Phone number: ", fontWeight = FontWeight.Bold)
             Text(productDetails.phone_number)
         }
 
@@ -173,7 +173,7 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
                 onClick = {
                     val mobileNumber = productDetails.phone_number
                     val message =
-                        "Hallo, ${productDetails.first_name} ik zou graag het product: ${productDetails.name} willen ophalen! Kunnen wij een afspraak maken?"
+                        "Hello, ${productDetails.first_name} I would like to come pick up: ${productDetails.name}! Can we make an appointment?"
                     val whatsappIntent = Intent(Intent.ACTION_VIEW).apply {
                         data =
                             Uri.parse("https://api.whatsapp.com/send?phone=$mobileNumber&text=$message")
@@ -194,7 +194,7 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
                     Color(0xFFA0C334) // Your desired color
                 )
             ) {
-                Text("Whatsapp aanbieder!")
+                Text("Whatsapp supplier!")
             }
         }
 

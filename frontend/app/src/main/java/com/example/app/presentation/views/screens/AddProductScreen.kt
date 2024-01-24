@@ -94,7 +94,7 @@ fun AddProductScreen(
 
             TextFieldComponent(
                 state = descriptionState,
-                label = "Beschrijving product",
+                label = "Product description",
                 { addProductViewModel.setDescription(it) },
             )
 
@@ -109,13 +109,13 @@ fun AddProductScreen(
 
             TextFieldComponent(
                 state = firstNameState,
-                label = "Voornaam",
+                label = "First name",
                 { addProductViewModel.setFirstName(it) },
             )
 
             TextFieldComponent(
                 state = lastNameState,
-                label = "Achternaam",
+                label = "Last name",
                 { addProductViewModel.setLastName(it) },
             )
 
@@ -133,13 +133,13 @@ fun AddProductScreen(
 
             TextFieldComponent(
                 state = phoneNumberState,
-                label = "Telefoon nummer",
+                label = "Phone Number",
                 { addProductViewModel.setPhoneNumber(it) },
             )
 
             TextFieldComponent(
                 state = cityState,
-                label = "Stad",
+                label = "City",
                 { addProductViewModel.setCity(it) },
             )
 
@@ -149,7 +149,7 @@ fun AddProductScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Product toevoegen")
+                Text("Add product")
             }
         }
     }
