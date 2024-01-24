@@ -17,7 +17,7 @@ def get():
     return jsonify([product.to_dict() for product in products])
 
 
-@products.route("/<radius>", methods=["GET"])
+@products.route("/radius/<radius>", methods=["GET"])
 @logged_in_required
 def get_within_radius(current_user, radius):
     """
@@ -27,24 +27,28 @@ def get_within_radius(current_user, radius):
     radius = float(radius)
 
     for product in products:
-        user_id = product.to_dict()["user"]["id"]
+        try:
+            user_id = product.to_dict()["user"]["id"]
 
-        user = db.collection("users").where("id", "==", user_id).get()
+            user = db.collection("users").where("id", "==", user_id).get()
 
-        if len(user) == 0:
-            return jsonify({"message": "An error occurred!"}), 500
+            if len(user) == 0:
+                return jsonify({"message": "An error occurred!"}), 500
 
-        user = user[0].to_dict()
+            user = user[0].to_dict()
 
-        distance = calculate_distance(
-            current_user["latitude"],
-            current_user["longitude"],
-            user["latitude"],
-            user["longitude"],
-        )
+            distance = calculate_distance(
+                current_user["latitude"],
+                current_user["longitude"],
+                user["latitude"],
+                user["longitude"],
+            )
 
-        if distance > radius:
-            products.remove(product)
+            if distance > radius:
+                products.remove(product)
+
+        except Exception as e:
+            print(e)
 
     return jsonify([product.to_dict() for product in products])
 
