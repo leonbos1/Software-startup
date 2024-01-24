@@ -191,7 +191,7 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
                 text = productItem.description,
                 fontSize = 20.sp,)
             Text(
-                text = "BB date: ${productItem.expiration_date}",
+                text = "Expiry date: ${productItem.expiration_date}",
                 fontSize = 20.sp,)
         }
         Spacer(modifier = Modifier.height(16.dp))

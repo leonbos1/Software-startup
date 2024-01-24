@@ -40,12 +40,6 @@ fun AddProductScreen(
 
     val nameState = addProductViewModel.nameState.value
     val descriptionState = addProductViewModel.descriptionState.value
-    val phoneNumberState = addProductViewModel.phoneNumberState.value
-    val firstNameState = addProductViewModel.firstNameState.value
-    val lastNameState = addProductViewModel.lastNameState.value
-    val emailState = addProductViewModel.emailNameState.value
-    val addressState = addProductViewModel.addressState.value
-    val cityState = addProductViewModel.cityState.value
     val expirationDateState = addProductViewModel.expirationState.value
 
     val scrollState = rememberScrollState()
@@ -106,42 +100,6 @@ fun AddProductScreen(
             }
 
             Spacer(modifier = Modifier.height(5.dp))
-
-            TextFieldComponent(
-                state = firstNameState,
-                label = "First name",
-                { addProductViewModel.setFirstName(it) },
-            )
-
-            TextFieldComponent(
-                state = lastNameState,
-                label = "Last name",
-                { addProductViewModel.setLastName(it) },
-            )
-
-            TextFieldComponent(
-                state = emailState,
-                label = "Email",
-                { addProductViewModel.setEmail(it) },
-            )
-
-            TextFieldComponent(
-                state = addressState,
-                label = "Address",
-                { addProductViewModel.setAddress(it) },
-            )
-
-            TextFieldComponent(
-                state = phoneNumberState,
-                label = "Phone Number",
-                { addProductViewModel.setPhoneNumber(it) },
-            )
-
-            TextFieldComponent(
-                state = cityState,
-                label = "City",
-                { addProductViewModel.setCity(it) },
-            )
 
             Button(
                 onClick = {
