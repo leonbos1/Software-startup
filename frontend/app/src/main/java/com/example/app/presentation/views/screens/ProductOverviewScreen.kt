@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,7 +50,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.app.R
 import com.example.app.common.Screens
-import com.example.app.data.AuthToken
 import com.example.app.data.remote.response.ProductResponse
 import com.example.app.util.RetrofitInstance
 import kotlinx.coroutines.flow.collectLatest
@@ -112,9 +110,20 @@ fun ProductOverviewScreen(navController: NavController) {
             )
 
             IconButton(
-                modifier = Modifier
-                    .width(200.dp),
-                onClick = { navController.navigate(Screens.AddProductScreen.route) }) {
+                modifier = Modifier.width(200.dp),
+                onClick = {
+                    if (productOverviewViewModel.isLoggedIn()) {
+                        navController.navigate(Screens.AddProductScreen.route)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "You need to log in first",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        navController.navigate(Screens.AccountScreen.route)
+                    }
+                }
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.add_plus_icon),
                     contentDescription = "add button",
@@ -251,8 +260,7 @@ class ProductOverviewModelFactory(private val context: Context) : ViewModelProvi
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ProductOverviewViewModel(
             ProductRepositoryImplementation(
-                RetrofitInstance.backendApi,
-                context
+                RetrofitInstance.backendApi
             )
         ) as T
     }

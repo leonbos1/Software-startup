@@ -49,7 +49,7 @@ import com.example.app.util.RetrofitInstance
 fun ProductDetailsScreen(navController: NavController, productId: String?) {
     val context = LocalContext.current
     val productDetailViewModel: ProductDetailViewModel =
-        viewModel(factory = ProductDetailViewModelFactory(context))
+        viewModel(factory = ProductDetailViewModelFactory())
 
     LaunchedEffect(productId) {
         productId?.let {
@@ -200,12 +200,11 @@ fun appInstalledOrNot(intent: Intent, context: Context): Boolean {
     return activities.size > 0
 }
 
-class ProductDetailViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+class ProductDetailViewModelFactory() : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ProductDetailViewModel(
             ProductRepositoryImplementation(
-                RetrofitInstance.backendApi,
-                context
+                RetrofitInstance.backendApi
             )
         ) as T
     }

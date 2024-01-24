@@ -14,7 +14,6 @@ import java.io.IOException
 
 class ProductRepositoryImplementation(
     private val backendApi: BackendApi,
-    private val context: Context
 ): ProductRepository {
 
     override suspend fun getAllProducts(): Flow<Resource<List<ProductResponse>>> {
@@ -43,7 +42,7 @@ class ProductRepositoryImplementation(
         return flow {
             try {
                 emit(Resource.Loading())
-                val productDetails = backendApi.getProductDetails(AuthToken.getInstance(context).token.toString(), productId)
+                val productDetails = backendApi.getProductDetails(AuthToken.getInstance().token.toString(), productId)
                 Log.d("productDetails", productDetails.toString())
                 emit(Resource.Success(productDetails))
             } catch (e: IOException) {
@@ -61,7 +60,7 @@ class ProductRepositoryImplementation(
 
     override suspend fun addProduct(addProductRequest: AddProductRequest): Resource<Unit> {
         return try {
-            backendApi.addProduct(AuthToken.getInstance(context).token.toString(), addProductRequest)
+            backendApi.addProduct(AuthToken.getInstance().token.toString(), addProductRequest)
             Resource.Success(Unit)
         }catch (e: IOException){
             Resource.Error("${e.message}")
@@ -72,7 +71,7 @@ class ProductRepositoryImplementation(
 
     override suspend fun deleteProduct(productId: String): Resource<Unit> {
         return try {
-            backendApi.deleteProduct(AuthToken.getInstance(context).token.toString(), productId)
+            backendApi.deleteProduct(AuthToken.getInstance().token.toString(), productId)
             Resource.Success(Unit)
         } catch (e: IOException) {
             Resource.Error("Network error: Could not delete product")

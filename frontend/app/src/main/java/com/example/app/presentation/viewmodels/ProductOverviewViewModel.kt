@@ -3,6 +3,7 @@ package com.example.app.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.data.AuthToken
 import com.example.app.data.remote.response.ProductResponse
 import com.example.app.data.repository.ProductRepository;
 import com.example.app.util.Resource
@@ -42,6 +43,11 @@ class ProductOverviewViewModel(
         }
     }
 
+    fun isLoggedIn(): Boolean {
+        val authToken = AuthToken.getInstance()
+        return authToken.isLoggedIn()
+    }
+
     fun deleteProduct(productId: String) {
         viewModelScope.launch {
             when (productRepository.deleteProduct(productId)) {
@@ -64,6 +70,6 @@ class ProductOverviewViewModel(
                 }
             }
         }
-    }
+   }
 }
 

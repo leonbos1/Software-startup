@@ -1,5 +1,6 @@
 package com.example.app.presentation.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -45,7 +46,7 @@ class AddProductViewModel@Inject constructor(
         _expirationState.value = expirationState.value.copy(text = value)
     }
 
-    private val _eventFlow = MutableSharedFlow<UiEvents>()
+    private val _eventFlow = MutableSharedFlow<UiEvents>(extraBufferCapacity = 1)
     val eventFlow = _eventFlow.asSharedFlow()
 
     fun addProduct() {
@@ -75,6 +76,7 @@ class AddProductViewModel@Inject constructor(
 
             when (addProductRequest.result) {
                 is Resource.Success -> {
+                    Log.d("AddProductViewModel", "Product added successfully, navigating to overview")
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent("Success")
                     )

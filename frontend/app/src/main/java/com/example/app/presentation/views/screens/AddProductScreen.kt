@@ -1,5 +1,6 @@
 package com.example.app.presentation.views.screens
 
+import android.util.Log
 import java.util.Calendar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,9 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.app.common.Screens
 import com.example.app.common.UiEvents
 import com.example.app.presentation.viewmodels.AddProductViewModel
 import com.example.app.ui.forms.TextFieldComponent
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AddProductScreen(
@@ -45,8 +48,8 @@ fun AddProductScreen(
     val scrollState = rememberScrollState()
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(Unit) {
-        addProductViewModel.eventFlow.collect { event ->
+    LaunchedEffect(key1 = true) {
+        addProductViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvents.SnackbarEvent -> {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -55,7 +58,8 @@ fun AddProductScreen(
                     )
                 }
                 is UiEvents.NavigateToProductOverview -> {
-                    navController.navigate("productOverviewScreen")
+                    Log.d("AddProductScreen", "Navigating to productOverviewScreen")
+                    navController.navigate(Screens.ProductOverviewScreen.route)
                 }
             }
         }
@@ -82,7 +86,7 @@ fun AddProductScreen(
         Column(modifier = Modifier.padding(16.dp)) {
             TextFieldComponent(
                 state = nameState,
-                label = "name",
+                label = "Product name",
                 { addProductViewModel.setName(it) },
             )
 
