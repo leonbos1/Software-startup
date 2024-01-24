@@ -116,7 +116,7 @@ class RegisterViewModel@Inject constructor(
                     )
                 }
                 is Resource.Error->{
-
+                    _userNameState.value=userNameState.value.copy(error = "username already in use")
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent("Failed")
                     )

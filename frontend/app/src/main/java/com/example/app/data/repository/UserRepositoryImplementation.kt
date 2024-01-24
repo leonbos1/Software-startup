@@ -55,14 +55,14 @@ class UserRepositoryImplementation(
             try {
                 emit(Resource.Loading())
                 val productDetails = backendApi.logout(AuthToken.getInstance(context).token.toString())
-                Log.d("productDetails", productDetails.toString())
+                AuthToken.getInstance(context).token = null
                 emit(Resource.Success(productDetails))
             } catch (e: IOException) {
                 e.printStackTrace()
-                emit(Resource.Error("Network error: Could not load product details"))
+                emit(Resource.Error("Network error: Could logout user"))
             } catch (e: HttpException) {
                 e.printStackTrace()
-                emit(Resource.Error("HTTP error: Could not load product details"))
+                emit(Resource.Error("HTTP error: Could not logout user"))
             } catch (e: Exception) {
                 e.printStackTrace()
                 emit(Resource.Error("Unknown error occurred"))
@@ -80,10 +80,10 @@ class UserRepositoryImplementation(
                 emit(Resource.Success(productDetails))
             } catch (e: IOException) {
                 e.printStackTrace()
-                emit(Resource.Error("Network error: Could not load product details"))
+                emit(Resource.Error("Network error: Could not load user details"))
             } catch (e: HttpException) {
                 e.printStackTrace()
-                emit(Resource.Error("HTTP error: Could not load product details"))
+                emit(Resource.Error("HTTP error: Could not load user details"))
             } catch (e: Exception) {
                 e.printStackTrace()
                 emit(Resource.Error("Unknown error occurred"))
@@ -100,10 +100,10 @@ class UserRepositoryImplementation(
                 emit(Resource.Success(productDetails))
             } catch (e: IOException) {
                 e.printStackTrace()
-                emit(Resource.Error("Network error: Could not load product details"))
+                emit(Resource.Error("Network error: Could not load your profile"))
             } catch (e: HttpException) {
                 e.printStackTrace()
-                emit(Resource.Error("HTTP error: Could not load product details"))
+                emit(Resource.Error("HTTP error: Could not load your profile"))
             } catch (e: Exception) {
                 e.printStackTrace()
                 emit(Resource.Error("Unknown error occurred"))

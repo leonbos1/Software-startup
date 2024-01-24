@@ -35,7 +35,6 @@ class LoginViewModel@Inject constructor(
     fun setPassword(value:String){ _passwordState.value = passwordState.value.copy(text = value) }
 
      val  _eventFlow = MutableSharedFlow<UiEvents>()
-    val eventFlow = _eventFlow.asSharedFlow()
 
 
     fun login() {
@@ -61,7 +60,6 @@ class LoginViewModel@Inject constructor(
 
             when(loginRequest.result){
                 is Resource.Success->{
-                    Log.d("TAG", "Success")
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent("Succes")
                     )
@@ -69,7 +67,6 @@ class LoginViewModel@Inject constructor(
                 is Resource.Error->{
                     _userNameState.value=userNameState.value.copy(error = "Username might be wrong")
                     _passwordState.value=passwordState.value.copy(error = "Password might be wrong")
-                    Log.d("TAG", "Failed")
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent("Failed")
                     )
