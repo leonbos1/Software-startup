@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from ..extensions import db
 from ..models.product import Product
-from ..utills.auth import logged_in_required, get_safe_user
+from ..utills.auth import logged_in_required, get_safe_user, get_restricted_user
 from ..utills.location import calculate_distance
 
 products = Blueprint("products", __name__)
@@ -12,9 +12,18 @@ def get():
     """
     Get all products in firebase
     """
-    products = db.collection("products").get()
+    products_ref = db.collection("products").get()
 
-    return jsonify([product.to_dict() for product in products])
+    products = [product.to_dict() for product in products_ref]
+                
+    for product in products:
+        try:
+            product["user"] = get_restricted_user(product["user"])
+        except Exception as e:
+            print("Product does not have a user")
+
+    return jsonify(products)
+
 
 
 @products.route("/radius/<radius>", methods=["GET"])
@@ -74,7 +83,8 @@ def post(current_user):
 
 
 @products.route("/<id>", methods=["GET"])
-def get_by_id(id: str):
+@logged_in_required
+def get_by_id(current_user, id: str):
     """
     Get a single product from firebase
     """

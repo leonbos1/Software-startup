@@ -47,3 +47,12 @@ def get_safe_user(user) -> dict:
         "created": user["created"],
         "updated": user["updated"],
     }
+
+
+def get_restricted_user(user) -> dict:
+    """
+    Return a restricted user dictionary
+    """
+    return {
+        "id": user["id"]
+    }
