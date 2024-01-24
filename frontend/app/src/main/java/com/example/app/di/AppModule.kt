@@ -56,10 +56,12 @@ object AppModule {
     @Provides
     @Singleton
     fun providesProductRepository(
-        apiService: BackendApi
+        apiService: BackendApi,
+        @ApplicationContext context: Context
     ): ProductRepository {
         return ProductRepositoryImplementation(
-            backendApi = apiService
+            backendApi = apiService,
+            context = context
         )
     }
     @Provides

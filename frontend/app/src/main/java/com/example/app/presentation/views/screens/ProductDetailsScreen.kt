@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import com.example.app.data.remote.response.ProductResponse
 import com.example.app.data.repository.ProductRepositoryImplementation
 import com.example.app.presentation.viewmodels.ProductDetailViewModel
+import com.example.app.presentation.viewmodels.ProductOverviewViewModel
 import com.example.app.util.Resource
 import com.example.app.util.RetrofitInstance
 
@@ -48,7 +49,7 @@ import com.example.app.util.RetrofitInstance
 fun ProductDetailsScreen(navController: NavController, productId: String?) {
     val context = LocalContext.current
     val productDetailViewModel: ProductDetailViewModel =
-        viewModel(factory = ProductDetailViewModelFactory())
+        viewModel(factory = ProductDetailViewModelFactory(context))
 
     LaunchedEffect(productId) {
         productId?.let {
@@ -141,22 +142,15 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 3.dp)
         ) {
-            Text("Name: ", fontWeight = FontWeight.Bold)
-            Text(productDetails.first_name + " " + productDetails.last_name)
-        }
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 3.dp)
-        ) {
-            Text("Email: ", fontWeight = FontWeight.Bold)
-            Text(productDetails.email)
+            Text("UserName: ", fontWeight = FontWeight.Bold)
+            Text(productDetails.user.username)
         }
         Row(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 3.dp)
         ) {
             Text("Phone number: ", fontWeight = FontWeight.Bold)
-            Text(productDetails.phone_number)
+            Text(productDetails.user.phone_number)
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -171,9 +165,9 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
             Button(
                 //NEEDS TO BE TESTED
                 onClick = {
-                    val mobileNumber = productDetails.phone_number
+                    val mobileNumber = productDetails.user.phone_number
                     val message =
-                        "Hello, ${productDetails.first_name} I would like to come pick up: ${productDetails.name}! Can we make an appointment?"
+                        "Hello, ${productDetails.user.phone_number} I would like to come pick up: ${productDetails.name}! Can we make an appointment?"
                     val whatsappIntent = Intent(Intent.ACTION_VIEW).apply {
                         data =
                             Uri.parse("https://api.whatsapp.com/send?phone=$mobileNumber&text=$message")
@@ -206,8 +200,13 @@ fun appInstalledOrNot(intent: Intent, context: Context): Boolean {
     return activities.size > 0
 }
 
-class ProductDetailViewModelFactory : ViewModelProvider.Factory {
+class ProductDetailViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductDetailViewModel(ProductRepositoryImplementation(RetrofitInstance.backendApi)) as T
+        return ProductDetailViewModel(
+            ProductRepositoryImplementation(
+                RetrofitInstance.backendApi,
+                context
+            )
+        ) as T
     }
 }

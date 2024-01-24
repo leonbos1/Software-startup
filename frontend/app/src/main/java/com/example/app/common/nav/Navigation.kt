@@ -1,5 +1,7 @@
 package com.example.app.common.nav
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,6 +19,7 @@ import com.example.app.presentation.views.screens.login
 import com.example.app.presentation.views.screens.register
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screens.ProductOverviewScreen.route) {
