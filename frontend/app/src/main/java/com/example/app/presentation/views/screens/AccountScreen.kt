@@ -132,28 +132,14 @@ fun TableLayout2(productDetails: SafeUserResponse, context: Context, viewModel: 
 
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
             Text("First name:  ", fontWeight = FontWeight.Light, fontSize = 17.sp)
-            Text(productDetails.first_name, fontWeight = FontWeight.Bold, fontSize = 21.sp)
-        }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("Last name: ", fontWeight = FontWeight.Light, fontSize = 17.sp)
-            Text(productDetails.last_name, fontWeight = FontWeight.Light, fontSize = 21.sp)
-        }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("email: ", fontWeight = FontWeight.Light, fontSize = 17.sp)
-            Text(productDetails.email, fontWeight = FontWeight.Light, fontSize = 21.sp)
-        }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("Phone number: ", fontWeight = FontWeight.Light, fontSize = 17.sp)
-            Text(productDetails.last_name, fontWeight = FontWeight.Light, fontSize = 21.sp)
+            Text(productDetails.username, fontWeight = FontWeight.Bold, fontSize = 21.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
             Text("id: ", fontWeight = FontWeight.Light, fontSize = 17.sp)
             Text(productDetails.id, fontWeight = FontWeight.Light, fontSize = 21.sp)
         }
-
         Spacer(modifier = Modifier.height(16.dp))
         Spacer(modifier = Modifier.height(20.dp))
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
