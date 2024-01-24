@@ -1,5 +1,6 @@
 package com.example.app.presentation.views.screens
 
+import android.content.Context
 import android.os.Build
 import com.example.app.data.repository.ProductRepositoryImplementation
 import com.example.app.presentation.viewmodels.ProductOverviewViewModel
@@ -50,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.app.R
 import com.example.app.common.Screens
+import com.example.app.data.AuthToken
 import com.example.app.data.remote.response.ProductResponse
 import com.example.app.util.RetrofitInstance
 import kotlinx.coroutines.flow.collectLatest
@@ -59,9 +61,9 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProductOverviewScreen(navController: NavController) {
-    val productOverviewViewModel: ProductOverviewViewModel = viewModel(factory = ProductOverviewModelFactory())
-    val productList = productOverviewViewModel.product.collectAsState().value
     val context = LocalContext.current
+    val productOverviewViewModel: ProductOverviewViewModel = viewModel(factory = ProductOverviewModelFactory(context))
+    val productList = productOverviewViewModel.product.collectAsState().value
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     var searchQuery by remember { mutableStateOf("") }
 
@@ -245,8 +247,13 @@ fun ConfirmDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
     )
 }
 
-class ProductOverviewModelFactory : ViewModelProvider.Factory {
+class ProductOverviewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductOverviewViewModel(ProductRepositoryImplementation(RetrofitInstance.backendApi)) as T
+        return ProductOverviewViewModel(
+            ProductRepositoryImplementation(
+                RetrofitInstance.backendApi,
+                context
+            )
+        ) as T
     }
 }
