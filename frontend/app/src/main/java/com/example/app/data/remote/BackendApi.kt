@@ -35,12 +35,16 @@ interface BackendApi {
 
     @POST("/users")
     suspend fun register(@Body registerRequest: RegisterRequest): RegisterResponse
+
     @POST("/users/login")
     suspend fun login(@Body loginRequest: LoginRequest): LoginResponse
+
     @GET("/users/current_user")
     suspend fun  getCurUser(@Header("Authorization") token: String): SafeUserResponse
+
     @POST("/users/logout")
     suspend fun logout(@Header("Authorization") token: String): LogoutResponse
+
     @GET("/users/{userId}")
     suspend fun getUserDetails(@Header("Authorization") token: String, @Path("userId") productId: String): UserResponse
 
