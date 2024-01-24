@@ -186,7 +186,14 @@ fun ProductItem(navController: NavController, productItem: ProductResponse, prod
 }
 
 @Composable
-fun CardDetails(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel, onDeleteClick: () -> Unit) {
+fun CardDetails(
+    navController: NavController,
+    productItem: ProductResponse,
+    productOverviewViewModel: ProductOverviewViewModel,
+    onDeleteClick: () -> Unit) {
+
+    val context = LocalContext.current
+
     Column {
         Column(
             modifier = Modifier
@@ -221,7 +228,19 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
             Spacer(modifier = Modifier.width(16.dp))
 
             Button(
-                onClick = { navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id)) },
+                onClick = {
+                    // Check if the user is logged in
+                    if (productOverviewViewModel.isLoggedIn()) {
+                        navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id))
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "You need to log in first",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        navController.navigate(Screens.AccountScreen.route)
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
                     Color(0xFFA0C334) // Orange color
                 )
