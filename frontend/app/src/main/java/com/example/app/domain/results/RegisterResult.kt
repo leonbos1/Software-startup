@@ -9,5 +9,9 @@ class RegisterResult (
     var phoneNumberError: String? = null,
     var userNameError: String? = null,
     var passwordError: String? = null,
-    var result: Resource<Unit>? = null
+    var result: Resource<Unit>? = null,
+    var addressError: String? = null,
+    var addressNumberError: String? = null,
+    var cityError: String? = null,
+    var postalCodeError: String? = null
 )

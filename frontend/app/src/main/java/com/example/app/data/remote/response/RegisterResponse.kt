@@ -8,5 +8,9 @@ data class RegisterResponse(
     val password: String,
     val phoneNumber: String,
     val created : String,
-    val updated : String
+    val updated : String,
+    val address: String,
+    val addressNumber: String,
+    val city: String,
+    val postalCode: String
 )

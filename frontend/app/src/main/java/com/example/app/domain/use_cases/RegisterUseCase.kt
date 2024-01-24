@@ -15,7 +15,11 @@ class RegisterUseCase(
         email: String,
         phoneNumber: String,
         userName: String,
-        password: String
+        password: String,
+        address: String,
+        addressNumber: String,
+        city: String,
+        postalCode: String
     ): RegisterResult {
         val firstNameError = if (firstName.isBlank()) "firstName cannot be blank" else null
         val lastNameError = if (lastName.isBlank()) "lastName cannot be blank" else null
@@ -23,10 +27,14 @@ class RegisterUseCase(
         val phoneNumberError = if (phoneNumber.isBlank()) "phoneNumber cannot be blank" else null
         val userNameError = if (userName.isBlank()) "userName cannot be blank" else null
         val passwordError = if (password.isBlank()) "password cannot be blank" else null
+        val addressError = if (address.isBlank()) "password cannot be blank" else null
+        val addressNumberError = if (addressNumber.isBlank()) "password cannot be blank" else null
+        val cityError = if (address.isBlank()) "password cannot be blank" else null
+        val postalCodeError = if (address.isBlank()) "password cannot be blank" else null
 
         val registerResult = RegisterResult()
 
-        if (listOf(firstNameError, lastNameError, emailError, phoneNumberError, userNameError, passwordError).any { it != null }) {
+        if (listOf(firstNameError, lastNameError, emailError, phoneNumberError, userNameError, passwordError, addressError, addressNumberError, cityError, postalCodeError).any { it != null }) {
             registerResult.apply {
                 this.firstNameError = firstNameError
                 this.lastNameError = lastNameError
@@ -34,6 +42,10 @@ class RegisterUseCase(
                 this.phoneNumberError = phoneNumberError
                 this.userNameError = userNameError
                 this.passwordError = passwordError
+                this.addressError = addressError
+                this.addressNumberError = addressNumberError
+                this.cityError = cityError
+                this.postalCodeError = postalCodeError
             }
             return registerResult
         }
@@ -45,6 +57,10 @@ class RegisterUseCase(
             phoneNumber = phoneNumber,
             userName = userName,
             password = password,
+            address = address,
+            addressNumber = addressNumber,
+            city = city,
+            postalCode = postalCode
         )
 
         registerResult.result = repository.register(registerRequest)
