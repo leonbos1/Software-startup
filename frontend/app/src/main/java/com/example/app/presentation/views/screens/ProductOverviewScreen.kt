@@ -69,8 +69,8 @@ fun ProductOverviewScreen(navController: NavController) {
     val productList = productOverviewViewModel.product.collectAsState().value
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     var searchQuery by remember { mutableStateOf("") }
-    var selectedRadius by remember { mutableStateOf(10) }
-    val radiusOptions = listOf(5, 10, 20, 50, 100)
+    var selectedRadius by remember { mutableStateOf("10") }
+    val radiusOptions = listOf("5", "10", "20", "50", "100", "All")
     var expanded by remember { mutableStateOf(false) }
 
     val sortedAndFilteredList = productList
@@ -86,9 +86,6 @@ fun ProductOverviewScreen(navController: NavController) {
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
-
-
-    productOverviewViewModel.loadProducts()
 
     Column(
         modifier = Modifier
@@ -141,8 +138,19 @@ fun ProductOverviewScreen(navController: NavController) {
         ) {
             Text("Radius: ")
             Spacer(modifier = Modifier.width(8.dp))
-            OutlinedButton(onClick = { expanded = true }) {
-                Text("${selectedRadius}km")
+            OutlinedButton(onClick = {
+                if (productOverviewViewModel.isLoggedIn()) {
+                    expanded = true
+                } else {
+                    Toast.makeText(context, "You must be logged in to use this feature.", Toast.LENGTH_SHORT).show()
+                    navController.navigate(Screens.AccountScreen.route)
+                }
+            }) {
+                if (selectedRadius == "All") {
+                    Text("All")
+                } else {
+                    Text("${selectedRadius}km")
+                }
                 Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
             }
             DropdownMenu(
@@ -153,9 +161,17 @@ fun ProductOverviewScreen(navController: NavController) {
                     DropdownMenuItem(onClick = {
                         selectedRadius = radius
                         expanded = false
-                        productOverviewViewModel.loadProductsInRadius(radius.toString())
+                        if (radius == "All") {
+                            productOverviewViewModel.loadProducts()
+                        } else {
+                            productOverviewViewModel.loadProductsInRadius(radius)
+                        }
                     }) {
-                        Text("${radius}km")
+                        if (radius == "All") {
+                            Text("All")
+                        } else {
+                            Text("${radius}km")
+                        }
                     }
                 }
             }
@@ -190,7 +206,6 @@ fun ProductItem(navController: NavController, productItem: ProductResponse, prod
     if (showDialog) {
         ConfirmDeleteDialog(
             onConfirm = {
-                // Handle the deletion here
                 productOverviewViewModel.deleteProduct(productItem.id)
                 showDialog = false
             },
@@ -247,7 +262,7 @@ fun CardDetails(
                 .padding(end = 15.dp, bottom = 3.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            if (productOverviewViewModel.isLoggedIn()) {  // Check if the user is logged in
+            if (productOverviewViewModel.isLoggedIn()) {
                 IconButton(onClick = onDeleteClick) {
                     Icon(
                         painter = painterResource(R.drawable.remove_icon),
@@ -260,7 +275,6 @@ fun CardDetails(
 
             Button(
                 onClick = {
-                    // Check if the user is logged in
                     if (productOverviewViewModel.isLoggedIn()) {
                         navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id))
                     } else {
@@ -273,7 +287,7 @@ fun CardDetails(
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    Color(0xFFA0C334) // Orange color
+                    Color(0xFFA0C334)
                 )
             ) {
                 Text("More info")
