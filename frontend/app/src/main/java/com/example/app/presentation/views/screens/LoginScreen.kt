@@ -68,7 +68,7 @@ fun login(
 
         TextFieldComponent(
             state = userNameState,
-            label = "UserName",
+            label = "Username",
             { loginViewModel.setUserName(it) },
         )
         TextFieldComponent(
