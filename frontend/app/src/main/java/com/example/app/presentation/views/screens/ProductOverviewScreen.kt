@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,7 +55,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.app.R
 import com.example.app.common.Screens
-import com.example.app.data.AuthToken
 import com.example.app.data.remote.response.ProductResponse
 import com.example.app.util.RetrofitInstance
 import kotlinx.coroutines.flow.collectLatest
@@ -84,14 +82,11 @@ fun ProductOverviewScreen(navController: NavController) {
         }
 
     LaunchedEffect(key1 = productOverviewViewModel.showErrorToastChannel) {
-        productOverviewViewModel.showErrorToastChannel.collectLatest { show ->
-            if (show) {
-                Toast.makeText(
-                    context, "Error", Toast.LENGTH_SHORT
-                ).show()
-            }
+        productOverviewViewModel.showErrorToastChannel.collectLatest { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
+
 
     productOverviewViewModel.loadProducts()
 
@@ -119,9 +114,20 @@ fun ProductOverviewScreen(navController: NavController) {
                 )
             )
             IconButton(
-                modifier = Modifier
-                    .width(200.dp),
-                onClick = { navController.navigate(Screens.AddProductScreen.route) }) {
+                modifier = Modifier.width(200.dp),
+                onClick = {
+                    if (productOverviewViewModel.isLoggedIn()) {
+                        navController.navigate(Screens.AddProductScreen.route)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "You need to log in first, before adding a product.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        navController.navigate(Screens.AccountScreen.route)
+                    }
+                }
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.add_plus_icon),
                     contentDescription = "add button",
@@ -211,7 +217,14 @@ fun ProductItem(navController: NavController, productItem: ProductResponse, prod
 }
 
 @Composable
-fun CardDetails(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel, onDeleteClick: () -> Unit) {
+fun CardDetails(
+    navController: NavController,
+    productItem: ProductResponse,
+    productOverviewViewModel: ProductOverviewViewModel,
+    onDeleteClick: () -> Unit) {
+
+    val context = LocalContext.current
+
     Column {
         Column(
             modifier = Modifier
@@ -234,17 +247,31 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
                 .padding(end = 15.dp, bottom = 3.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = onDeleteClick) {
-                Icon(
-                    painter = painterResource(R.drawable.remove_icon),
-                    contentDescription = "remove button"
-                )
+            if (productOverviewViewModel.isLoggedIn()) {  // Check if the user is logged in
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.remove_icon),
+                        contentDescription = "remove button"
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
             Button(
-                onClick = { navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id)) },
+                onClick = {
+                    // Check if the user is logged in
+                    if (productOverviewViewModel.isLoggedIn()) {
+                        navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id))
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "You need to log in first",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        navController.navigate(Screens.AccountScreen.route)
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
                     Color(0xFFA0C334) // Orange color
                 )
@@ -282,8 +309,7 @@ class ProductOverviewModelFactory(private val context: Context) : ViewModelProvi
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ProductOverviewViewModel(
             ProductRepositoryImplementation(
-                RetrofitInstance.backendApi,
-                context
+                RetrofitInstance.backendApi
             )
         ) as T
     }

@@ -8,6 +8,7 @@ products = Blueprint("products", __name__)
 
 
 @products.route("", methods=["GET"])
+@products.route("/radius", methods=["GET"])
 def get():
     """
     Get all products in firebase

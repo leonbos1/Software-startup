@@ -17,7 +17,6 @@ import java.io.IOException
 
 class UserRepositoryImplementation(
     private val backendApi: BackendApi,
-    private val context: Context
 ): UserRepository {
 
 
@@ -25,7 +24,7 @@ class UserRepositoryImplementation(
         return try {
 
             val response = backendApi.login(loginRequest)
-            AuthToken.getInstance(context).token = response.token
+            AuthToken.getInstance().token = response.token
 
 
             Resource.Success(Unit)
@@ -54,8 +53,8 @@ class UserRepositoryImplementation(
         return flow {
             try {
                 emit(Resource.Loading())
-                val productDetails = backendApi.logout(AuthToken.getInstance(context).token.toString())
-                AuthToken.getInstance(context).token = null
+                val productDetails = backendApi.logout(AuthToken.getInstance().token.toString())
+                AuthToken.getInstance().token = null
                 emit(Resource.Success(productDetails))
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -76,7 +75,7 @@ class UserRepositoryImplementation(
             try {
                 emit(Resource.Loading())
                 Log.d("tag", userId)
-                val productDetails = backendApi.getUserDetails(AuthToken.getInstance(context).token.toString(),userId)
+                val productDetails = backendApi.getUserDetails(AuthToken.getInstance().token.toString(),userId)
                 emit(Resource.Success(productDetails))
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -95,7 +94,7 @@ class UserRepositoryImplementation(
         return flow {
             try {
                 emit(Resource.Loading())
-                val productDetails = backendApi.getCurUser(AuthToken.getInstance(context).token.toString())
+                val productDetails = backendApi.getCurUser(AuthToken.getInstance().token.toString())
                 Log.d("productDetails", productDetails.toString())
                 emit(Resource.Success(productDetails))
             } catch (e: IOException) {

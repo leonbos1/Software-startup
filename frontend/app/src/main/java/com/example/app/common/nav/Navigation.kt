@@ -19,12 +19,13 @@ import com.example.app.presentation.views.screens.login
 import com.example.app.presentation.views.screens.register
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screens.ProductOverviewScreen.route) {
         composable(route = Screens.ProductOverviewScreen.route) {
-            ProductOverviewScreen(navController)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                ProductOverviewScreen(navController)
+            }
         }
                 composable(route = Screens.ProductOverviewScreen.route + "/{productId}",
                     arguments = listOf(

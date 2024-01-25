@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.app.data.AuthToken
 import com.example.app.presentation.views.screens.MainScreen
 import com.example.app.presentation.views.screens.login
 import com.example.app.presentation.views.screens.register
@@ -19,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         actionBar?.hide();
+        AuthToken.init(this)
 
 
         installSplashScreen()
