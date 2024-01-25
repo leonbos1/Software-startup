@@ -69,7 +69,7 @@ fun ProductOverviewScreen(navController: NavController) {
     val productList = productOverviewViewModel.product.collectAsState().value
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     var searchQuery by remember { mutableStateOf("") }
-    var selectedRadius by remember { mutableStateOf("10") }
+    var selectedRadius by remember { mutableStateOf("All") }
     val radiusOptions = listOf("5", "10", "20", "50", "100", "All")
     var expanded by remember { mutableStateOf(false) }
 
@@ -149,7 +149,7 @@ fun ProductOverviewScreen(navController: NavController) {
                 if (selectedRadius == "All") {
                     Text("All")
                 } else {
-                    Text("${selectedRadius}km")
+                    Text("$selectedRadius km")
                 }
                 Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
             }
@@ -170,7 +170,7 @@ fun ProductOverviewScreen(navController: NavController) {
                         if (radius == "All") {
                             Text("All")
                         } else {
-                            Text("${radius}km")
+                            Text("$radius km")
                         }
                     }
                 }
