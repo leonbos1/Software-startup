@@ -14,6 +14,8 @@ def post():
     """
     data = request.get_json()
 
+    keys = data.keys()
+
     try:
         user = User(
             first_name=data["firstName"],
@@ -30,6 +32,9 @@ def post():
 
     except Exception as e:
         return jsonify({"message": "Invalid request!: " + str(e)}), 400
+
+    if "addressNumberAddition" in keys:
+        user.address_number_addition = data["addressNumberAddition"]
 
     username_exists = (
         db.collection("users").where("username", "==", user.username).get()
@@ -115,7 +120,7 @@ def login():
     users = users_ref.where("username", "==", username).get()
 
     if len(users) == 0:
-        return jsonify({"message": "User not found!"}), 404
+        return jsonify({"message": "Invalid password!"}), 400
 
     user = users[0]
 
@@ -184,7 +189,8 @@ def put(current_user, id: str):
     userObject["email"] = data["email"]
     userObject["phone_number"] = data["phone_number"]
     userObject["username"] = data["username"]
-    userObject["password"] = generate_password_hash(data["password"], method="scrypt")
+    userObject["password"] = generate_password_hash(
+        data["password"], method="scrypt")
 
     users_ref.document(user.id).update(userObject)
 

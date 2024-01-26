@@ -13,6 +13,7 @@ class User(Base):
     password: str
     address: str
     address_number: int
+    address_number_addition: str
     city: str
     postal_code: str
     latitude: float
@@ -31,6 +32,7 @@ class User(Base):
         address_number,
         city,
         postal_code,
+        address_number_addition = ""
     ):
         self.first_name = first_name
         self.last_name = last_name
@@ -40,9 +42,10 @@ class User(Base):
         self.password = password
         self.address = address
         self.address_number = address_number
+        self.address_number_addition = address_number_addition
         self.city = city
         self.postal_code = postal_code
-        geolocation = location.get_coordinates(address, address_number, postal_code)
+        geolocation = location.get_coordinates(address, address_number, address_number_addition, postal_code)
         self.latitude = geolocation[0]
         self.longitude = geolocation[1]
         self.token = None
@@ -60,6 +63,7 @@ class User(Base):
             "password": self.password,
             "address": self.address,
             "address_number": self.address_number,
+            "address_number_addition": self.address_number_addition,
             "city": self.city,
             "postal_code": self.postal_code,
             "latitude": self.latitude,
