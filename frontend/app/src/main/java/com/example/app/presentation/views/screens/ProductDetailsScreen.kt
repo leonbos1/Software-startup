@@ -142,7 +142,7 @@ fun TableLayout(productDetails: ProductResponse, context: Context) {
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 3.dp)
         ) {
-            Text("UserName: ", fontWeight = FontWeight.Bold)
+            Text("Username: ", fontWeight = FontWeight.Bold)
             Text(productDetails.user.username)
         }
         Row(

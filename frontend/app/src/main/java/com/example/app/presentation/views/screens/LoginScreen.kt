@@ -68,12 +68,12 @@ fun login(
 
         TextFieldComponent(
             state = userNameState,
-            label = "userName",
+            label = "Username",
             { loginViewModel.setUserName(it) },
         )
         TextFieldComponent(
             state = passwordState,
-            label = "password",
+            label = "Password",
 
             { loginViewModel.setPassword(it) },
             visualTransformation =  PasswordVisualTransformation(),
@@ -85,7 +85,7 @@ fun login(
 
         }, colors = ButtonDefaults.buttonColors(Color(0xFFA0C334)),
                   modifier =  Modifier.fillMaxWidth()) {
-            Text("SIGN in", Modifier.padding(vertical = 1.dp))
+            Text("Sign in", Modifier.padding(vertical = 1.dp))
         }
         Divider(
             color = Color.Black.copy(alpha = 0.3f),
@@ -93,7 +93,7 @@ fun login(
             modifier = Modifier.padding(top = 48.dp)
             )
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Dont have an account?", color = Color.Black)
+            Text("Don't have an account?", color = Color.Black)
             TextButton(onClick = {navController.navigate(Screens.RegisterScreen.route)}) {
                 Text("Sign Up")
             }

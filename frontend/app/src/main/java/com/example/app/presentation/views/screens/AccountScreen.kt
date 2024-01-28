@@ -85,14 +85,14 @@ fun AccountScreen(
 
                 ) {
                     Icon(painter = painterResource(id = R.drawable.user_filled_icon), null)
-                    Text("not logged in", Modifier.padding(vertical = 1.dp))
+                    Text("Not logged in", Modifier.padding(vertical = 1.dp))
 
                     Button(
                         onClick = { navController.navigate(Screens.LoginScreen.route) },
                         colors = ButtonDefaults.buttonColors(Color(0xFFA0C334)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("SIGN in", Modifier.padding(vertical = 1.dp))
+                        Text("Sign in", Modifier.padding(vertical = 1.dp))
                     }
                     Divider(
                         color = Color.Black.copy(alpha = 0.3f),
@@ -138,23 +138,23 @@ fun TableLayout2(productDetails: UserResponse, context: Context, viewModel: Acco
             Text(productDetails.first_name, fontWeight = FontWeight.Medium, fontSize = 21.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("last name:        ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
+            Text("Last name:        ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
             Text(productDetails.last_name, fontWeight = FontWeight.Light, fontSize = 21.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("username:        ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
+            Text("Username:        ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
             Text(productDetails.username, fontWeight = FontWeight.Light, fontSize = 21.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("email:               ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
+            Text("Email:               ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
             Text(productDetails.email, fontWeight = FontWeight.Light, fontSize = 21.sp,  )
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("address:           ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
+            Text("Address:           ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
             Text("${productDetails.address} ${productDetails.addressNumber}" , fontWeight = FontWeight.Light, fontSize = 21.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("city:                  ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
+            Text("City:                  ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
             Text(productDetails.city, fontWeight = FontWeight.Light, fontSize = 21.sp)
         }
 
@@ -179,7 +179,7 @@ fun TableLayout2(productDetails: UserResponse, context: Context, viewModel: Acco
                     Color(0xFFA0C334) // Your desired color
                 )
             ) {
-                Text("logout")
+                Text("Logout")
             }
         }
 

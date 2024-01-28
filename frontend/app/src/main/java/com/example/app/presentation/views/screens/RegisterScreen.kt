@@ -75,52 +75,52 @@ fun register(
     ) {
         TextFieldComponent(
             state = firstNameState,
-            label = "firstName",
+            label = "First Name",
             { registerViewModel.setFirstName(it) },
         )
         TextFieldComponent(
             state = lastNameState,
-            label = "lastName",
+            label = "Last Name",
             { registerViewModel.setLastName(it) },
         )
         TextFieldComponent(
             state = emailState,
-            label = "email",
+            label = "Email",
             { registerViewModel.setEmail(it) },
         )
         TextFieldComponent(
             state = phoneNumberState,
-            label = "phoneNumber",
+            label = "Phone Number",
             { registerViewModel.setPhoneNumber(it) },
         )
         TextFieldComponent(
             state = userNameState,
-            label = "userName",
+            label = "Username",
             { registerViewModel.setUserName(it) },
         )
         TextFieldComponent(
             state = addressState,
-            label = "address",
+            label = "Address",
             { registerViewModel.setAddress(it) },
         )
         TextFieldComponent(
             state = addressNumberState,
-            label = "addres Number",
+            label = "Addres Number",
             { registerViewModel.setAddressNumber(it) },
         )
         TextFieldComponent(
             state = cityState,
-            label = "city",
+            label = "City",
             { registerViewModel.setCity(it) },
         )
         TextFieldComponent(
             state = postalCodeState,
-            label = "postalCode",
+            label = "Postalcode",
             { registerViewModel.setPostalCode(it) },
         )
         TextFieldComponent(
             state = passwordState,
-            label = "password",
+            label = "Password",
 
             { registerViewModel.setPassword(it) },
             visualTransformation =  PasswordVisualTransformation(),
@@ -130,7 +130,7 @@ fun register(
             collectEvent()
             registerViewModel.register()
                          }, Modifier.fillMaxWidth()) {
-            Text("SIGN up", Modifier.padding(vertical = 1.dp))
+            Text("Sign up", Modifier.padding(vertical = 1.dp))
         }
         Divider(
             color = Color.Black.copy(alpha = 0.3f),
