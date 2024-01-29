@@ -23,6 +23,9 @@ def get():
         except Exception as e:
             print("Product does not have a user")
 
+    if len(products) == 0:
+        return jsonify({"message": "No products found!"}), 404
+
     return jsonify(products)
 
 
