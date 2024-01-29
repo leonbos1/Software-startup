@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -100,7 +101,7 @@ fun AccountScreen(
                         modifier = Modifier.padding(top = 48.dp)
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Dont have an account?", color = Color.Black)
+                        Text("Don't have an account?", color = Color.Black)
                         TextButton(onClick = { navController.navigate(Screens.RegisterScreen.route) }) {
                             Text("Sign Up")
                         }
@@ -133,30 +134,12 @@ fun TableLayout2(productDetails: UserResponse, context: Context, viewModel: Acco
     ) {
         Spacer(modifier = Modifier.height(20.dp))
 
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("First name:       ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
-            Text(productDetails.first_name, fontWeight = FontWeight.Medium, fontSize = 21.sp)
-        }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("Last name:        ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
-            Text(productDetails.last_name, fontWeight = FontWeight.Light, fontSize = 21.sp)
-        }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("Username:        ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
-            Text(productDetails.username, fontWeight = FontWeight.Light, fontSize = 21.sp)
-        }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("Email:               ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
-            Text(productDetails.email, fontWeight = FontWeight.Light, fontSize = 21.sp,  )
-        }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("Address:           ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
-            Text("${productDetails.address} ${productDetails.address_number}${productDetails.address_number_addition}" , fontWeight = FontWeight.Light, fontSize = 21.sp)
-        }
-        Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            Text("City:                  ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
-            Text(productDetails.city, fontWeight = FontWeight.Light, fontSize = 21.sp)
-        }
+        CreateRow("First name:", productDetails.first_name)
+        CreateRow("Last name:", productDetails.last_name)
+        CreateRow("Username:", productDetails.username)
+        CreateRow("Email:", productDetails.email)
+        CreateRow("Address:", "${productDetails.address} ${productDetails.addressNumber}")
+        CreateRow("City:", productDetails.city)
 
         Divider(
             color = Color.Black.copy(alpha = 0.3f),
@@ -176,13 +159,25 @@ fun TableLayout2(productDetails: UserResponse, context: Context, viewModel: Acco
                 navController.navigate(Screens.ProductOverviewScreen.route)
                 },
                 colors = ButtonDefaults.buttonColors(
-                    Color(0xFFA0C334) // Your desired color
+                    Color(0xFFA0C334)
                 )
             ) {
                 Text("Logout")
             }
         }
 
+    }
+}
+@Composable
+fun CreateRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 2.dp),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Text(label, fontWeight = FontWeight.Normal, fontSize = 20.sp, modifier = Modifier.width(120.dp))
+        Text(value, fontWeight = FontWeight.Light, fontSize = 21.sp)
     }
 }
 

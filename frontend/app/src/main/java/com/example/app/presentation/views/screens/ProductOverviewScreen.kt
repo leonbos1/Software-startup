@@ -20,8 +20,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -64,6 +69,9 @@ fun ProductOverviewScreen(navController: NavController) {
     val productList = productOverviewViewModel.product.collectAsState().value
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     var searchQuery by remember { mutableStateOf("") }
+    var selectedRadius by remember { mutableStateOf("All") }
+    val radiusOptions = listOf("5", "10", "20", "50", "100", "All")
+    var expanded by remember { mutableStateOf(false) }
 
     val sortedAndFilteredList = productList
         .sortedBy {
@@ -78,9 +86,6 @@ fun ProductOverviewScreen(navController: NavController) {
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
-
-
-    productOverviewViewModel.loadProducts()
 
     Column(
         modifier = Modifier
@@ -105,7 +110,6 @@ fun ProductOverviewScreen(navController: NavController) {
                     unfocusedBorderColor = Color.Gray
                 )
             )
-
             IconButton(
                 modifier = Modifier.width(200.dp),
                 onClick = {
@@ -127,7 +131,50 @@ fun ProductOverviewScreen(navController: NavController) {
                     modifier = Modifier.size(35.dp)
                 )
             }
-
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(8.dp)
+        ) {
+            Text("Radius: ")
+            Spacer(modifier = Modifier.width(8.dp))
+            OutlinedButton(onClick = {
+                if (productOverviewViewModel.isLoggedIn()) {
+                    expanded = true
+                } else {
+                    Toast.makeText(context, "You must be logged in to use this feature.", Toast.LENGTH_SHORT).show()
+                    navController.navigate(Screens.AccountScreen.route)
+                }
+            }) {
+                if (selectedRadius == "All") {
+                    Text("All")
+                } else {
+                    Text("$selectedRadius km")
+                }
+                Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                radiusOptions.forEach { radius ->
+                    DropdownMenuItem(onClick = {
+                        selectedRadius = radius
+                        expanded = false
+                        if (radius == "All") {
+                            productOverviewViewModel.loadProducts()
+                        } else {
+                            productOverviewViewModel.loadProductsInRadius(radius)
+                        }
+                    }) {
+                        if (radius == "All") {
+                            Text("All")
+                        } else {
+                            Text("$radius km")
+                        }
+                    }
+                }
+            }
         }
         if (sortedAndFilteredList.isEmpty()) {
             Box(
@@ -159,7 +206,6 @@ fun ProductItem(navController: NavController, productItem: ProductResponse, prod
     if (showDialog) {
         ConfirmDeleteDialog(
             onConfirm = {
-                // Handle the deletion here
                 productOverviewViewModel.deleteProduct(productItem.id)
                 showDialog = false
             },
@@ -216,7 +262,7 @@ fun CardDetails(
                 .padding(end = 15.dp, bottom = 3.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            if (productOverviewViewModel.isLoggedIn()) {  // Check if the user is logged in
+            if (productOverviewViewModel.isLoggedIn()) {
                 IconButton(onClick = onDeleteClick) {
                     Icon(
                         painter = painterResource(R.drawable.remove_icon),
@@ -229,7 +275,6 @@ fun CardDetails(
 
             Button(
                 onClick = {
-                    // Check if the user is logged in
                     if (productOverviewViewModel.isLoggedIn()) {
                         navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id))
                     } else {
@@ -242,7 +287,7 @@ fun CardDetails(
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    Color(0xFFA0C334) // Orange color
+                    Color(0xFFA0C334)
                 )
             ) {
                 Text("More info")

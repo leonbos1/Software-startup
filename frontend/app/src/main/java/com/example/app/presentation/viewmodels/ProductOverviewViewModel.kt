@@ -56,7 +56,6 @@ class ProductOverviewViewModel(
                     loadProducts()
                 }
                 is Resource.Error -> {
-                    // Send the specific error message to the view
                     _showErrorToastChannel.send(result.message ?: "An unknown error occurred")
                 }
                 is Resource.Loading -> TODO()
@@ -74,5 +73,23 @@ class ProductOverviewViewModel(
             }
         }
    }
+
+    fun loadProductsInRadius(radius: String) {
+        viewModelScope.launch {
+            productRepository.getProductsInRadius(radius).collectLatest { result ->
+                when(result) {
+                    is Resource.Error -> {
+                        _showErrorToastChannel.send(result.message ?: "An unknown error occurred")
+                    }
+                    is Resource.Success -> {
+                        result.data?.let { products ->
+                            _product.update { products }
+                        }
+                    }
+                    is Resource.Loading -> TODO()
+                }
+            }
+        }
+    }
 }
 

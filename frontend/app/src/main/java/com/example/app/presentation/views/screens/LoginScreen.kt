@@ -49,7 +49,7 @@ fun login(
         loginViewModel.viewModelScope.launch {
             loginViewModel._eventFlow.collect { event ->
                 if(event.toString().equals("SnackbarEvent(message=Succes)")) {
-                    navController.navigate(Screens.AccountScreen.route)
+                    navController.navigate(Screens.ProductOverviewScreen.route)
                 }
                 else {
 

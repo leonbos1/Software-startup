@@ -15,6 +15,26 @@ import java.io.IOException
 class ProductRepositoryImplementation(
     private val backendApi: BackendApi,
 ): ProductRepository {
+    override suspend fun getProductsInRadius(radius: String): Flow<Resource<List<ProductResponse>>> {
+        return flow {
+            val productsFromBackendApi = try {
+                backendApi.getProductsInRadius(AuthToken.getInstance().token.toString(), radius)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(Resource.Error("Error loading products"))
+                return@flow
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error("Error loading products"))
+                return@flow
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emit(Resource.Error("Error loading products"))
+                return@flow
+            }
+            emit(Resource.Success(productsFromBackendApi))
+        }
+    }
 
     override suspend fun getAllProducts(): Flow<Resource<List<ProductResponse>>> {
         return flow {
@@ -33,7 +53,6 @@ class ProductRepositoryImplementation(
                 emit(Resource.Error("Error loading products"))
                 return@flow
             }
-
             emit(Resource.Success(productsFromBackendApi))
         }
     }
@@ -76,7 +95,6 @@ class ProductRepositoryImplementation(
         } catch (e: IOException) {
             Resource.Error("Network error: Could not delete product")
         } catch (e: HttpException) {
-            // Check if it's a 401 error
             if (e.code() == 401) {
                 Resource.Error("You can only delete your own created products!")
             } else {

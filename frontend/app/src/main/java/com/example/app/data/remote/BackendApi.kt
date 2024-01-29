@@ -20,9 +20,11 @@ interface BackendApi {
     companion object {
         const val BASE_URL = "https://saveplate-yvl4k4opia-ez.a.run.app/"
     }
-
-    @GET("/products")
+    @GET("/products/radius")
     suspend fun getAllProducts(): List<ProductResponse>
+
+    @GET("/products/radius/{radius}")
+    suspend fun getProductsInRadius(@Header("Authorization") token: String, @Path("radius") radius: String): List<ProductResponse>
 
     @GET("/products/{productId}")
     suspend fun getProductDetails(@Header("Authorization") token: String, @Path("productId") productId: String): ProductResponse
