@@ -138,7 +138,7 @@ fun TableLayout2(productDetails: UserResponse, context: Context, viewModel: Acco
         CreateRow("Last name:", productDetails.last_name)
         CreateRow("Username:", productDetails.username)
         CreateRow("Email:", productDetails.email)
-        CreateRow("Address:", "${productDetails.address} ${productDetails.addressNumber}")
+        CreateRow("Address:", "${productDetails.address} ${productDetails.address_number}${productDetails.address_number_addition}")
         CreateRow("City:", productDetails.city)
 
         Divider(
