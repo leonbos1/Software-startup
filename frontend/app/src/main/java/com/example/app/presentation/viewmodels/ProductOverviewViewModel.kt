@@ -79,7 +79,8 @@ class ProductOverviewViewModel(
             productRepository.getProductsInRadius(radius).collectLatest { result ->
                 when(result) {
                     is Resource.Error -> {
-                        _showErrorToastChannel.send(result.message ?: "An unknown error occurred")
+                        _showErrorToastChannel.send(result.message ?: "No products found in this radius")
+
                     }
                     is Resource.Success -> {
                         result.data?.let { products ->
