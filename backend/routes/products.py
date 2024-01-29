@@ -63,6 +63,9 @@ def get_within_radius(current_user, radius):
         except Exception as e:
             print(e)
 
+    if len(products) == 0:
+        return jsonify({"message": "No products found!"}), 404
+
     return jsonify([product.to_dict() for product in products])
 
 
