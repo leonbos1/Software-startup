@@ -8,7 +8,8 @@ data class RegisterRequest(
     val userName: String,
     val password: String,
     val address: String,
-    val addressNumber: String,
+    val addressNumber: Int,
+    val addressNumberAddition: String,
     val city: String,
     val postalCode: String
 

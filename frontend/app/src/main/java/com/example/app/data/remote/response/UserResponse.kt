@@ -9,7 +9,8 @@ data class UserResponse(
     val username: String,
     val password: String,
     val address: String,
-    val addressNumber: String,
+    val address_number: Int,
+    val address_number_addition: String,
     val city: String,
     val postalCode: String
 )

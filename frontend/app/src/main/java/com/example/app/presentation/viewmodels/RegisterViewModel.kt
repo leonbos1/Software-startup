@@ -39,6 +39,8 @@ class RegisterViewModel@Inject constructor(
     val addressState: State<TextFieldState> = _addressState
     private var _addressNumberState = mutableStateOf(TextFieldState())
     val addresNumberState: State<TextFieldState> = _addressNumberState
+    private var _addressNumberAddState = mutableStateOf(TextFieldState())
+    val addresNumberAddState: State<TextFieldState> = _addressNumberAddState
     private var _cityState = mutableStateOf(TextFieldState())
     val cityState: State<TextFieldState> = _cityState
     private var _postalCodeState = mutableStateOf(TextFieldState())
@@ -52,6 +54,7 @@ class RegisterViewModel@Inject constructor(
     fun setPassword(value:String){ _passwordState.value = passwordState.value.copy(text = value) }
     fun setAddress(value:String){ _addressState.value = addressState.value.copy(text = value) }
     fun setAddressNumber(value:String){ _addressNumberState.value = addresNumberState.value.copy(text = value) }
+    fun setAddressNumberAdd(value:String){ _addressNumberAddState.value = addresNumberAddState.value.copy(text = value) }
     fun setCity(value:String){ _cityState.value = cityState.value.copy(text = value) }
     fun setPostalCode(value:String){ _postalCodeState.value = postalCodeState.value.copy(text = value) }
 
@@ -70,7 +73,8 @@ class RegisterViewModel@Inject constructor(
                 userName = userNameState.value.text,
                 password = passwordState.value.text,
                 address = addressState.value.text,
-                addressNumber = addresNumberState.value.text,
+                addressNumber = addresNumberState.value.text.toInt(),
+                addressNumberAdd = addresNumberAddState.value.text,
                 city = cityState.value.text,
                 postalCode = postalCodeState.value.text
             )

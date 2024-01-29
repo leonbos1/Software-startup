@@ -151,7 +151,7 @@ fun TableLayout2(productDetails: UserResponse, context: Context, viewModel: Acco
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
             Text("Address:           ", fontWeight = FontWeight.Normal, fontSize = 20.sp)
-            Text("${productDetails.address} ${productDetails.addressNumber}" , fontWeight = FontWeight.Light, fontSize = 21.sp)
+            Text("${productDetails.address} ${productDetails.address_number}${productDetails.address_number_addition}" , fontWeight = FontWeight.Light, fontSize = 21.sp)
         }
         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
             Text("City:                  ", fontWeight = FontWeight.Normal, fontSize = 20.sp)

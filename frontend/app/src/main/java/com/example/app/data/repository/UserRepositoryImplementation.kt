@@ -38,6 +38,8 @@ class UserRepositoryImplementation(
 
     override suspend fun register(registerRequest: RegisterRequest): Resource<Unit> {
         return try {
+            Log.d("Tagx", registerRequest.addressNumber.toString())
+            Log.d("Tagx2", registerRequest.addressNumberAddition)
             val response = backendApi.register(registerRequest)
 
 

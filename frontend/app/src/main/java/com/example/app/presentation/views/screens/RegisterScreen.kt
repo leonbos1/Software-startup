@@ -43,6 +43,7 @@ fun register(
     val passwordState = registerViewModel.passwordState.value
     val addressState = registerViewModel.addressState.value
     val addressNumberState = registerViewModel.addresNumberState.value
+    val addressNumberAddState = registerViewModel.addresNumberAddState.value
     val cityState = registerViewModel.cityState.value
     val postalCodeState = registerViewModel.postalCodeState.value
 
@@ -107,6 +108,11 @@ fun register(
             state = addressNumberState,
             label = "Addres Number",
             { registerViewModel.setAddressNumber(it) },
+        )
+        TextFieldComponent(
+            state = addressNumberAddState,
+            label = "Addres letter",
+            { registerViewModel.setAddressNumberAdd(it) },
         )
         TextFieldComponent(
             state = cityState,
