@@ -1,5 +1,6 @@
 package com.example.app.presentation.views.screens
 
+import android.content.Context
 import android.os.Build
 import com.example.app.data.repository.ProductRepositoryImplementation
 import com.example.app.presentation.viewmodels.ProductOverviewViewModel
@@ -8,7 +9,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,8 +20,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -58,11 +64,14 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProductOverviewScreen(navController: NavController) {
-    val productOverviewViewModel: ProductOverviewViewModel = viewModel(factory = ProductOverviewModelFactory())
-    val productList = productOverviewViewModel.product.collectAsState().value
     val context = LocalContext.current
+    val productOverviewViewModel: ProductOverviewViewModel = viewModel(factory = ProductOverviewModelFactory(context))
+    val productList = productOverviewViewModel.product.collectAsState().value
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     var searchQuery by remember { mutableStateOf("") }
+    var selectedRadius by remember { mutableStateOf("All") }
+    val radiusOptions = listOf("5", "10", "20", "50", "100", "All")
+    var expanded by remember { mutableStateOf(false) }
 
     val sortedAndFilteredList = productList
         .sortedBy {
@@ -73,19 +82,14 @@ fun ProductOverviewScreen(navController: NavController) {
         }
 
     LaunchedEffect(key1 = productOverviewViewModel.showErrorToastChannel) {
-        productOverviewViewModel.showErrorToastChannel.collectLatest { show ->
-            if (show) {
-                Toast.makeText(
-                    context, "Error", Toast.LENGTH_SHORT
-                ).show()
-            }
+        productOverviewViewModel.showErrorToastChannel.collectLatest { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
-    productOverviewViewModel.loadProducts()
-
     Column(
         modifier = Modifier
+            .padding(start = 20.dp, end = 20.dp)
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -99,27 +103,78 @@ fun ProductOverviewScreen(navController: NavController) {
                 onValueChange = { searchQuery = it },
                 label = { Text("Search") },
                 modifier = Modifier
-                    .width(325.dp)
-                    .padding(16.dp),
+                    .width(250.dp),
                 shape = RoundedCornerShape(20.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Blue,
                     unfocusedBorderColor = Color.Gray
                 )
             )
-
             IconButton(
-                modifier = Modifier
-                    .width(200.dp)
-                    .padding(16.dp),
-                onClick = { navController.navigate(Screens.AddProductScreen.route) }) {
+                modifier = Modifier.width(200.dp),
+                onClick = {
+                    if (productOverviewViewModel.isLoggedIn()) {
+                        navController.navigate(Screens.AddProductScreen.route)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "You need to log in first, before adding a product.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        navController.navigate(Screens.AccountScreen.route)
+                    }
+                }
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.add_plus_icon),
                     contentDescription = "add button",
                     modifier = Modifier.size(35.dp)
                 )
             }
-
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(8.dp)
+        ) {
+            Text("Radius: ")
+            Spacer(modifier = Modifier.width(8.dp))
+            OutlinedButton(onClick = {
+                if (productOverviewViewModel.isLoggedIn()) {
+                    expanded = true
+                } else {
+                    Toast.makeText(context, "You must be logged in to use this feature.", Toast.LENGTH_SHORT).show()
+                    navController.navigate(Screens.AccountScreen.route)
+                }
+            }) {
+                if (selectedRadius == "All") {
+                    Text("All")
+                } else {
+                    Text("$selectedRadius km")
+                }
+                Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                radiusOptions.forEach { radius ->
+                    DropdownMenuItem(onClick = {
+                        selectedRadius = radius
+                        expanded = false
+                        if (radius == "All") {
+                            productOverviewViewModel.loadProducts()
+                        } else {
+                            productOverviewViewModel.loadProductsInRadius(radius)
+                        }
+                    }) {
+                        if (radius == "All") {
+                            Text("All")
+                        } else {
+                            Text("$radius km")
+                        }
+                    }
+                }
+            }
         }
         if (sortedAndFilteredList.isEmpty()) {
             Box(
@@ -130,9 +185,10 @@ fun ProductOverviewScreen(navController: NavController) {
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(16.dp)
             ) {
                 items(sortedAndFilteredList.size) { index ->
                     ProductItem(navController, sortedAndFilteredList[index], productOverviewViewModel)
@@ -145,6 +201,20 @@ fun ProductOverviewScreen(navController: NavController) {
 
 @Composable
 fun ProductItem(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        ConfirmDeleteDialog(
+            onConfirm = {
+                productOverviewViewModel.deleteProduct(productItem.id)
+                showDialog = false
+            },
+            onDismiss = {
+                showDialog = false
+            }
+        )
+    }
+
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -157,12 +227,19 @@ fun ProductItem(navController: NavController, productItem: ProductResponse, prod
             .height(height = 240.dp)
             .padding(5.dp)
     ) {
-        CardDetails(navController, productItem, productOverviewViewModel)
+        CardDetails(navController, productItem, productOverviewViewModel, { showDialog = true })
     }
 }
 
 @Composable
-fun CardDetails(navController: NavController, productItem: ProductResponse, productOverviewViewModel: ProductOverviewViewModel) {
+fun CardDetails(
+    navController: NavController,
+    productItem: ProductResponse,
+    productOverviewViewModel: ProductOverviewViewModel,
+    onDeleteClick: () -> Unit) {
+
+    val context = LocalContext.current
+
     Column {
         Column(
             modifier = Modifier
@@ -175,7 +252,7 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
                 text = productItem.description,
                 fontSize = 20.sp,)
             Text(
-                text = "Tht datum: ${productItem.expiration_date}",
+                text = "Expiry date: ${productItem.expiration_date}",
                 fontSize = 20.sp,)
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -183,30 +260,71 @@ fun CardDetails(navController: NavController, productItem: ProductResponse, prod
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 15.dp, bottom = 3.dp),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = {
-                productOverviewViewModel.deleteProduct(productItem.id)
-            }) {
-                Icon(
-                    painter = painterResource(R.drawable.remove_icon),
-                    contentDescription = "remove button"
-                )
+            if (productOverviewViewModel.isLoggedIn()) {
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.remove_icon),
+                        contentDescription = "remove button"
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
             Button(
-                onClick = { navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id)) },
+                onClick = {
+                    if (productOverviewViewModel.isLoggedIn()) {
+                        navController.navigate(Screens.ProductOverviewScreen.withArgs(productItem.id))
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "You need to log in first",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        navController.navigate(Screens.AccountScreen.route)
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
-                    Color(0xFFA0C334) // Orange color
+                    Color(0xFFA0C334)
                 )
             ) {
-                Text("Meer details")
+                Text("More info")
             }
         }
     }
 }
 
-class ProductOverviewModelFactory : ViewModelProvider.Factory {
+@Composable
+fun ConfirmDeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Confirm Deletion")
+        },
+        text = {
+            Text("Are you sure you want to delete this product?")
+        },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text("Yes")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("No")
+            }
+        }
+    )
+}
+
+class ProductOverviewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductOverviewViewModel(ProductRepositoryImplementation(RetrofitInstance.backendApi)) as T
+        return ProductOverviewViewModel(
+            ProductRepositoryImplementation(
+                RetrofitInstance.backendApi
+            )
+        ) as T
     }
 }
